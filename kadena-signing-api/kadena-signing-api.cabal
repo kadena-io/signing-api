@@ -1,0 +1,43 @@
+cabal-version:       2.4
+name:                kadena-signing-api
+version:             0.1
+synopsis:            Signing API facilitating seamless dapp / wallet interop
+-- description:
+homepage:            https://github.com/kadena-io/signing-api
+bug-reports:         https://github.com/kadena-io/signing-api/issues
+license:             BSD-3-Clause
+license-file:        LICENSE
+author:              Doug Beardsley
+maintainer:          doug@kadena.io
+copyright:           Kadena LLC
+extra-source-files:  CHANGELOG.md
+
+library
+  exposed-modules:
+    Kadena.SigningApi
+  build-depends:
+      aeson ^>= 1.4.2.0
+    , base ^>= 4.12.0.0
+    , data-default ^>= 0.7
+    , lens ^>= 4.17
+    , neat-interpolation ^>= 0.3
+    , pact ^>= 3.3.0
+    , servant ^>= 0.15
+    , servant-swagger ^>= 1.1
+    , split ^>= 0.2
+    , swagger2 ^>= 2.4
+    , text >= 1.0 && < 1.3
+
+  hs-source-dirs:      src
+  default-language:    Haskell2010
+
+executable gen-docs
+  main-is: main.hs
+  hs-source-dirs: exe
+  if impl(ghcjs)
+    buildable: False
+  build-depends:
+      aeson
+    , base
+    , bytestring ^>= 0.10
+    , kadena-signing-api
