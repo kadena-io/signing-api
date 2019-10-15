@@ -2,10 +2,10 @@ chainweaver-macos:
   tags:
     - macos
   script:
-    - nix-build -A ghc.kadena-signing-api
+    - nix-build
 
 chainweaver-linux:
   tags:
     - linux
   script:
-    - nix-build -A ghc.kadena-signing-api
+    - nix-build
