@@ -1,10 +1,10 @@
-chainweaver-macos:
+signing-api-macos:
   tags:
     - macos
   script:
     - nix-build
 
-chainweaver-linux:
+signing-api-linux:
   tags:
     - linux
   script:
