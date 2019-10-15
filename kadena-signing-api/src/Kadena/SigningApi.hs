@@ -17,10 +17,7 @@ import qualified Data.Swagger as S
 import Data.Text (Text)
 import qualified Data.Text as T
 import GHC.Generics
-
---import Pact.Server.API
-import Kadena.Instances
-
+import Pact.Server.API
 import NeatInterpolation
 import Pact.Types.Capability (SigCapability(..))
 import Pact.Types.ChainMeta (TTLSeconds(..))
