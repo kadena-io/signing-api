@@ -50,11 +50,11 @@ mkAccountName n
 -- | Values of this type are supplied by the dapp author to the wallet so the
 -- wallet knows what capabilities need to be granted for the transaction.
 data DappCap = DappCap
-  { _dappCapp_role :: Text
+  { _dappCap_role :: Text
   -- ^ Short name for this capability that is meaningful to the user
-  , _dappCapp_description :: Text
+  , _dappCap_description :: Text
   -- ^ More detailed information that the user might need to know
-  , _dappCapp_cap :: SigCapability
+  , _dappCap_cap :: SigCapability
   -- ^ The actual capability
   } deriving (Eq,Ord,Show,Generic)
 
