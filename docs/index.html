@@ -117,7 +117,13 @@
     {
       <span class="hljs-attr">&quot;role&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
       <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-      <span class="hljs-attr">&quot;cap&quot;</span>: <span class="hljs-string">&quot;(foo.bar \&quot;arg1\&quot; \&quot;arg2\&quot;)&quot;</span>
+      <span class="hljs-attr">&quot;cap&quot;</span>: {
+        <span class="hljs-attr">&quot;args&quot;</span>: [
+          <span class="hljs-string">&quot;arg1&quot;</span>,
+          <span class="hljs-string">&quot;arg2&quot;</span>
+        ],
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;foo.bar&quot;</span>
+      }
     }
   ],
   <span class="hljs-attr">&quot;nonce&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
@@ -517,7 +523,13 @@
     {
       <span class="hljs-attr">&quot;role&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
       <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-      <span class="hljs-attr">&quot;cap&quot;</span>: <span class="hljs-string">&quot;(foo.bar \&quot;arg1\&quot; \&quot;arg2\&quot;)&quot;</span>
+      <span class="hljs-attr">&quot;cap&quot;</span>: {
+        <span class="hljs-attr">&quot;args&quot;</span>: [
+          <span class="hljs-string">&quot;arg1&quot;</span>,
+          <span class="hljs-string">&quot;arg2&quot;</span>
+        ],
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;foo.bar&quot;</span>
+      }
     }
   ],
   <span class="hljs-attr">&quot;nonce&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
@@ -618,7 +630,13 @@
                   <body><pre><code class="hljs language-json">{
   <span class="hljs-attr">&quot;role&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
   <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-  <span class="hljs-attr">&quot;cap&quot;</span>: <span class="hljs-string">&quot;(foo.bar \&quot;arg1\&quot; \&quot;arg2\&quot;)&quot;</span>
+  <span class="hljs-attr">&quot;cap&quot;</span>: {
+    <span class="hljs-attr">&quot;args&quot;</span>: [
+      <span class="hljs-string">&quot;arg1&quot;</span>,
+      <span class="hljs-string">&quot;arg2&quot;</span>
+    ],
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;foo.bar&quot;</span>
+  }
 }
 </code></pre> </body>
                   </html>
@@ -629,8 +647,8 @@
           </div>
           <div id="definition-SigCapability" class="definition panel" data-traverse-target="definition-SigCapability">
             <h2 class="panel-title">
-              <a name="/definitions/SigCapability"></a>SigCapability: string
-              <!-- <span class="json-property-type"><span class="json-property-type">string</span>
+              <a name="/definitions/SigCapability"></a>SigCapability: object
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
               <span class="json-property-range" title="Value limits"></span>
               
               
@@ -640,6 +658,47 @@
               <div class="doc-copy">
                 <section class="json-schema-description">
                   <p>a capability and any arguments it requires</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="args">
+                      <span class="json-property-name">args:</span>
+                      <span class="json-property-type">string[]</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                      <span class="json-property-required"></span>
+                    </dt>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-array-items">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                        <div class="json-inner-schema"> </div>
+                      </section>
+                    </dt>
+                    <dt data-property-name="name">
+                      <span class="json-property-name">name:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                      <span class="json-property-required"></span>
+                    </dt>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;args&quot;</span>: [
+    <span class="hljs-string">&quot;arg1&quot;</span>,
+    <span class="hljs-string">&quot;arg2&quot;</span>
+  ],
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;foo.bar&quot;</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
                 </section>
               </div>
             </div>
