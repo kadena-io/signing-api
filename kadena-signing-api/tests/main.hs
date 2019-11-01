@@ -10,14 +10,14 @@ import Data.Either (isLeft, isRight)
 import qualified Data.Char as Char
 import qualified Data.Text as T
 
-import Kadena.SigningApi (mkAccountName,isValidAccountNameCharacter)
+import Kadena.SigningApi (mkAccountName,isValidCharset)
 
 prop_accountname_valid :: Property
 prop_accountname_valid = property $ do
   nom <- forAll $ Gen.text (Range.linear 0 300) Gen.unicode
   let acc = mkAccountName nom
       len = T.length nom
-      anyInvalid = not $ T.foldl' (\b c -> b && isValidAccountNameCharacter c) True nom
+      anyInvalid = isValidCharset nom
 
   classify "valid length" (len >= 3 && len <= 256)
   classify "invalid length" (len < 3 || len > 256)
