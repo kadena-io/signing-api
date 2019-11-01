@@ -16,6 +16,7 @@ import Data.Swagger
 import qualified Data.Swagger as S
 import Data.Text (Text)
 import qualified Data.Text as T
+import qualified Data.Char as Char
 import GHC.Generics
 import Pact.Server.API
 import NeatInterpolation
@@ -43,9 +44,21 @@ this will be the account used to pay the transaction's gas price.
 -- | Smart constructor for account names. The only restriction in the coin
 -- contract (as it stands) appears to be that accounts can't be an empty string
 mkAccountName :: Text -> Either Text AccountName
-mkAccountName n
-  | T.null n = Left "Account name must not be empty"
-  | otherwise = Right $ AccountName n
+mkAccountName n =
+  if not isValidCharset then Left "Invalid Character detected. Must be Latin1, no spaces, control characters or '|'"
+  else if not isCorrectSize then Left "Incorrect length. Must be between 3 and 256 characters in length."
+  else Right $ AccountName n
+  where
+    isValidCharset = T.foldl' (\b c -> b && isValidAccountNameCharacter c) True n
+    isCorrectSize = let l = T.length n in l >= 3 && l <= 256
+
+isValidAccountNameCharacter :: Char -> Bool
+isValidAccountNameCharacter char = Char.isLatin1 char
+  && not ( Char.isSpace char ||
+           Char.isControl char ||
+           char == '|' ||
+           char == '\NUL'
+         )
 
 -- | Values of this type are supplied by the dapp author to the wallet so the
 -- wallet knows what capabilities need to be granted for the transaction.
