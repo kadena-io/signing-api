@@ -53,7 +53,7 @@ isCorrectSize :: Text -> Bool
 isCorrectSize n = let l = T.length n in l >= 3 && l <= 256
 
 isValidCharset :: Text -> Bool
-isValidCharset = T.foldl' (\b c -> b && isValidAccountNameCharacter c) True
+isValidCharset = T.all isValidAccountNameCharacter
 
 isValidAccountNameCharacter :: Char -> Bool
 isValidAccountNameCharacter char = Char.isLatin1 char
