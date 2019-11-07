@@ -22,7 +22,7 @@ import Pact.Server.API
 import NeatInterpolation
 import Pact.Types.Capability (SigCapability(..))
 import Pact.Types.ChainMeta (TTLSeconds(..))
-import Pact.Types.Runtime (GasLimit(..), ChainId)
+import Pact.Types.Runtime (GasLimit(..), ChainId, PublicKey)
 import Pact.Types.Command (Command)
 import Pact.Types.Swagger
 import Servant.API
@@ -94,6 +94,7 @@ data SigningRequest = SigningRequest
   , _signingRequest_gasLimit :: Maybe GasLimit
   , _signingRequest_ttl :: Maybe TTLSeconds
   , _signingRequest_sender :: Maybe AccountName
+  , _signingRequest_extraSigners :: Maybe [PublicKey]
   } deriving (Show, Generic)
 
 instance ToJSON SigningRequest where
