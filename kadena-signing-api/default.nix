@@ -1,5 +1,5 @@
-{ pactRef ? "3b203840de73a33f46a87f7f81eeef86a0d5c97f"
-, pactSha ? "0jwld9fx75jfdi25rdyq0i662lykh7hdjqpm1yb0jz294bh27wz2"
+{ pactRef ? "a6c5315682d8e2a9a047a3d903d7641df066bbda"
+, pactSha ? "0a000lxgsj3kjkmgm2mkfnx609hqa4gcmpw40fbwxyaxnp93sb1f"
 }:
 
 let
@@ -8,9 +8,9 @@ pactSrc = builtins.fetchTarball {
   url = "https://github.com/kadena-io/pact/archive/${pactRef}.tar.gz";
   sha256 = pactSha;
 };
-pact = import pactSrc {};
+pact = import "${pactSrc}/project.nix" {};
 
-in pact.rp.project ({ pkgs, ... }:
+in pact.rp.project ({ pkgs, hackGet, ... }:
 let
 
 gitignoreSrc = pkgs.fetchFromGitHub {
@@ -23,7 +23,7 @@ inherit (import gitignoreSrc { inherit (pkgs) lib; }) gitignoreSource;
 
 in {
     name = "kadena-signing-api";
-    overrides = import ./overrides.nix pactSrc pkgs;
+    overrides = import ./overrides.nix pactSrc pkgs hackGet;
 
     packages = {
       kadena-signing-api = gitignoreSource ./.;
