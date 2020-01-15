@@ -21,7 +21,7 @@ library
     , data-default ^>= 0.7
     , lens ^>= 4.17
     , neat-interpolation ^>= 0.3
-    , pact ^>= 3.4.0
+    , pact >= 3.3.0 && < 3.5
     , servant >= 0.15 && < 0.17
     , servant-swagger ^>= 1.1
     , split ^>= 0.2
