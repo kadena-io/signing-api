@@ -57,9 +57,7 @@ isValidCharset = T.all isValidAccountNameCharacter
 
 isValidAccountNameCharacter :: Char -> Bool
 isValidAccountNameCharacter char = Char.isLatin1 char
-  && not ( Char.isSpace char ||
-           Char.isControl char ||
-           char == '|' ||
+  && not ( Char.isControl char ||
            char == '\NUL'
          )
 
