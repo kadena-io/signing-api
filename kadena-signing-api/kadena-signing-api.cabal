@@ -17,15 +17,15 @@ library
     Kadena.SigningApi
   build-depends:
       aeson ^>= 1.4.2.0
-    , base ^>= 4.12.0.0
+    , base >= 4.12.0.0 && < 4.14
     , data-default ^>= 0.7
-    , lens ^>= 4.17
+    , lens >= 4.17 && < 4.19
     , neat-interpolation ^>= 0.3
     , pact >= 3.3.0 && < 3.6
     , servant >= 0.15 && < 0.17
     , servant-swagger ^>= 1.1
     , split ^>= 0.2
-    , swagger2 ^>= 2.4
+    , swagger2 >= 2.4 && < 2.6
     , text >= 1.0 && < 1.3
 
   hs-source-dirs:      src
