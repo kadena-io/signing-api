@@ -1,8 +1,8 @@
 {
   "owner": "kadena-io",
   "repo": "kpkgs",
-  "branch": "master",
+  "branch": "pact-3.7",
   "private": false,
-  "rev": "3df9128f548429bd6be6093ac206dbaef20f4489",
-  "sha256": "01aakgyyb7hkxnhwgvcc2vvrdlzcl27hpcdh3gcgw7jw3plaqpd3"
+  "rev": "b40974b111b07b55c9c6344bc07189ee82ded2a3",
+  "sha256": "1b2xam4igz9d12r1w9hgn09g5bb2p82lxkk7zrhi3giwxlqwfbm1"
 }

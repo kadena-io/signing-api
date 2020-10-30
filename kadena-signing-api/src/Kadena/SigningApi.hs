@@ -7,7 +7,7 @@
 
 module Kadena.SigningApi where
 
-import Control.Lens
+import Control.Lens hiding ((.=))
 import Data.Aeson
 import qualified Data.Aeson as A
 import qualified Data.List.Split as L
@@ -122,8 +122,26 @@ instance ToSchema SigningResponse where
   declareNamedSchema = (swaggerDescription "wallet response that includes the signed transaction") .
                        lensyDeclareNamedSchema 17
 
+newtype QuickSign = QuickSign { _quickSign_completedCommand :: Text }
+  deriving (Eq,Ord,Generic)
+
+instance ToJSON QuickSign where
+  toJSON a = object
+    [ "cmd" .= _quickSign_completedCommand a
+    ]
+
+instance FromJSON QuickSign where
+  parseJSON = withObject "QuickSign" $ \o -> do
+    cmd <- o .: "cmd"
+    pure $ QuickSign cmd
+
+instance ToSchema QuickSign where
+  declareNamedSchema = (swaggerDescription "completed transaction bytes to be signed") .
+                       lensyDeclareNamedSchema 11
+
 type SigningApi = "v1" :> V1SigningApi
 type V1SigningApi = "sign" :> ReqBody '[JSON] SigningRequest :> Post '[JSON] SigningResponse
+               :<|> "quickSign" :> ReqBody '[JSON] Value :> Post '[JSON] SigningResponse
 
 signingAPI :: Proxy SigningApi
 signingAPI = Proxy
