@@ -10,6 +10,8 @@ module Kadena.SigningApi where
 import Control.Lens hiding ((.=))
 import Data.Aeson
 import qualified Data.Aeson as A
+import Data.HashMap.Strict (HashMap)
+import qualified Data.HashMap.Strict as HM
 import qualified Data.List.Split as L
 import Data.Proxy
 import Data.Swagger
@@ -19,9 +21,9 @@ import qualified Data.Text as T
 import qualified Data.Char as Char
 import GHC.Generics
 import Pact.Server.API
-import NeatInterpolation
 import Pact.Types.Capability (SigCapability(..))
 import Pact.Types.ChainMeta (TTLSeconds(..))
+import Pact.Types.Crypto (PublicKeyBS(..), SignatureBS(..))
 import Pact.Types.Runtime (GasLimit(..), ChainId, PublicKey)
 import Pact.Types.Command (Command)
 import Pact.Types.Swagger
@@ -36,10 +38,7 @@ instance ToSchema AccountName where
   declareNamedSchema = swaggerDescription desc .
                        declareGenericString
     where
-      desc = [text|
-The name of an account in the coin contract. In the SigningRequest sender field,
-this will be the account used to pay the transaction's gas price.
-|]
+      desc = "The name of an account in the coin contract. In the SigningRequest sender field, this will be the account used to pay the transaction's gas price."
 
 -- | Smart constructor for account names. The only restriction in the coin
 -- contract (as it stands) appears to be that accounts can't be an empty string
@@ -122,26 +121,48 @@ instance ToSchema SigningResponse where
   declareNamedSchema = (swaggerDescription "wallet response that includes the signed transaction") .
                        lensyDeclareNamedSchema 17
 
-newtype QuickSign = QuickSign { _quickSign_completedCommand :: Text }
-  deriving (Eq,Ord,Generic)
+newtype QuickSignRequest = QuickSignRequest
+  { _quickSignReuest_completedCommand :: Text
+  } deriving (Eq,Ord,Generic)
 
-instance ToJSON QuickSign where
+instance ToJSON QuickSignRequest where
   toJSON a = object
-    [ "cmd" .= _quickSign_completedCommand a
+    [ "cmd" .= _quickSignReuest_completedCommand a
     ]
 
-instance FromJSON QuickSign where
-  parseJSON = withObject "QuickSign" $ \o -> do
+instance FromJSON QuickSignRequest where
+  parseJSON = withObject "QuickSignRequest" $ \o -> do
     cmd <- o .: "cmd"
-    pure $ QuickSign cmd
+    pure $ QuickSignRequest cmd
 
-instance ToSchema QuickSign where
+instance ToSchema QuickSignRequest where
   declareNamedSchema = (swaggerDescription "completed transaction bytes to be signed") .
+                       lensyDeclareNamedSchema 11
+
+data QuickSignResponse = QuickSignResponse
+  { _quickSignResponse_hash :: Text
+  , _quickSignResponse_sigs :: HashMap PublicKeyBS SignatureBS
+  } deriving (Eq,Generic)
+
+instance ToJSON QuickSignResponse where
+  toJSON a = object
+    [ "hash" .= _quickSignResponse_hash a
+    , "sigs" .= _quickSignResponse_sigs a
+    ]
+
+instance FromJSON QuickSignResponse where
+  parseJSON = withObject "QuickSignResponse" $ \o -> do
+    hash <- o .: "hash"
+    sigs <- o .: "sigs"
+    pure $ QuickSignResponse hash sigs
+
+instance ToSchema QuickSignResponse where
+  declareNamedSchema = (swaggerDescription "signatures and the hash") .
                        lensyDeclareNamedSchema 11
 
 type SigningApi = "v1" :> V1SigningApi
 type V1SigningApi = "sign" :> ReqBody '[JSON] SigningRequest :> Post '[JSON] SigningResponse
-               :<|> "quickSign" :> ReqBody '[JSON] Value :> Post '[JSON] SigningResponse
+               :<|> "quickSign" :> ReqBody '[JSON] QuickSignRequest :> Post '[JSON] QuickSignResponse
 
 signingAPI :: Proxy SigningApi
 signingAPI = Proxy
@@ -155,15 +176,11 @@ signingSwagger = toSwagger signingAPI
   & info.contact ?~ Contact (Just "Kadena LLC") (Just $ URL "https://kadena.io") (Just "info@kadena.io")
   & host ?~ Host "localhost" (Just 9467)
 
-apiDesc = [text|
-This API facilitates communication between dapps and wallets. This frees dapp
-developers from the complexity of managing private keys, allowing them to focus
-on the functionality and business logic of the application.`
-
-Whenever the dapp needs to send a signed transaction, all you have to do is make
-an AJAX request to this API on localhost port 9467 and the user's wallet app
-will handle all the details of transaction signing for you.
-|]
+apiDesc :: Text
+apiDesc = T.unlines
+  [ "This API facilitates communication between dapps and wallets. This frees dapp developers from the complexity of managing private keys, allowing them to focus on the functionality and business logic of the application."
+  , "Whenever the dapp needs to send a signed transaction, all you have to do is make an AJAX request to this API on localhost port 9467 and the user's wallet app will handle all the details of transaction signing for you."
+  ]
 
 -- | Aeson encoding options for compact encoding.
 --

@@ -1,9 +1,12 @@
 { kpkgs ? import ./dep/kpkgs {}
 }:
 
-kpkgs.rp.project ({ pkgs, hackGet, ... }: with pkgs.haskell.lib; {
+let
+pactSrc = /Users/doug/work/pact;
+in kpkgs.rp.project ({ pkgs, hackGet, ... }: with pkgs.haskell.lib; {
     name = "kadena-signing-api";
     overrides = self: super: {
+      pact = dontCheck ( addBuildDepend (self.callCabal2nix "pact" pactSrc {}) pkgs.z3);
     };
 
     packages = {
