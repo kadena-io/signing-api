@@ -19,7 +19,6 @@ import qualified Data.Text as T
 import qualified Data.Char as Char
 import GHC.Generics
 import Pact.Server.API
-import NeatInterpolation
 import Pact.Types.Capability (SigCapability(..))
 import Pact.Types.ChainMeta (TTLSeconds(..))
 import Pact.Types.Runtime (GasLimit(..), ChainId, PublicKey)
@@ -36,10 +35,7 @@ instance ToSchema AccountName where
   declareNamedSchema = swaggerDescription desc .
                        declareGenericString
     where
-      desc = [text|
-The name of an account in the coin contract. In the SigningRequest sender field,
-this will be the account used to pay the transaction's gas price.
-|]
+      desc = "The name of an account in the coin contract. In the SigningRequest sender field, this will be the account used to pay the transaction's gas price."
 
 -- | Smart constructor for account names. The only restriction in the coin
 -- contract (as it stands) appears to be that accounts can't be an empty string
@@ -137,15 +133,11 @@ signingSwagger = toSwagger signingAPI
   & info.contact ?~ Contact (Just "Kadena LLC") (Just $ URL "https://kadena.io") (Just "info@kadena.io")
   & host ?~ Host "localhost" (Just 9467)
 
-apiDesc = [text|
-This API facilitates communication between dapps and wallets. This frees dapp
-developers from the complexity of managing private keys, allowing them to focus
-on the functionality and business logic of the application.`
-
-Whenever the dapp needs to send a signed transaction, all you have to do is make
-an AJAX request to this API on localhost port 9467 and the user's wallet app
-will handle all the details of transaction signing for you.
-|]
+apiDesc :: Text
+apiDesc = T.unlines
+  [ "This API facilitates communication between dapps and wallets. This frees dapp developers from the complexity of managing private keys, allowing them to focus on the functionality and business logic of the application."
+  , "Whenever the dapp needs to send a signed transaction, all you have to do is make an AJAX request to this API on localhost port 9467 and the user's wallet app will handle all the details of transaction signing for you."
+  ]
 
 -- | Aeson encoding options for compact encoding.
 --
