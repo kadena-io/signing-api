@@ -122,12 +122,12 @@ instance ToSchema SigningResponse where
                        lensyDeclareNamedSchema 17
 
 newtype QuickSignRequest = QuickSignRequest
-  { _quickSignReuest_commands :: [Text]
+  { _quickSignRequest_commands :: [Text]
   } deriving (Eq,Ord,Generic)
 
 instance ToJSON QuickSignRequest where
   toJSON a = object
-    [ "cmds" .= _quickSignReuest_commands a
+    [ "cmds" .= _quickSignRequest_commands a
     ]
 
 instance FromJSON QuickSignRequest where
