@@ -4,9 +4,15 @@
 
 module Main where
 
+import Control.Lens
 import Data.Aeson
 import Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy as BSL
+import Data.Swagger
+import Data.Text (Text)
+import qualified Data.Text as T
+import Pact.Types.Swagger -- TODO: remove this dep
+import Servant.Swagger
 
 import Kadena.SigningApi
 

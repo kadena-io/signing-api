@@ -1,5 +1,5 @@
 cabal-version:       2.4
-name:                kadena-signing-api
+name:                kadena-signing-api-docs
 version:             0.1
 synopsis:            Doc generator for Signing API
 -- description:
@@ -22,4 +22,9 @@ executable gen-docs
     , base
     , bytestring ^>= 0.10
     , kadena-signing-api
+    , lens >= 4.17 && < 4.19
+    , pact >= 3.3.0 && < 4.0
+    , servant-swagger ^>= 1.1
+    , swagger2 >= 2.4 && < 2.6
+    , text
 
