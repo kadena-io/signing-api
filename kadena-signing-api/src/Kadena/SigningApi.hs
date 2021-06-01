@@ -12,8 +12,6 @@ import Data.Aeson
 import qualified Data.Aeson as A
 import qualified Data.List.Split as L
 import Data.Proxy
-import Data.Swagger
-import qualified Data.Swagger as S
 import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Char as Char
@@ -23,19 +21,11 @@ import Pact.Types.Capability (SigCapability(..))
 import Pact.Types.ChainMeta (TTLSeconds(..))
 import Pact.Types.Runtime (GasLimit(..), ChainId, PublicKey)
 import Pact.Types.Command (Command)
-import Pact.Types.Swagger
 import Servant.API
-import Servant.Swagger
 
 newtype AccountName = AccountName
   { unAccountName :: Text
   } deriving (Eq, Ord, Show, Generic, ToJSON, FromJSON, ToJSONKey, FromJSONKey)
-
-instance ToSchema AccountName where
-  declareNamedSchema = swaggerDescription desc .
-                       declareGenericString
-    where
-      desc = "The name of an account in the coin contract. In the SigningRequest sender field, this will be the account used to pay the transaction's gas price."
 
 -- | Smart constructor for account names. The only restriction in the coin
 -- contract (as it stands) appears to be that accounts can't be an empty string
@@ -75,10 +65,6 @@ instance ToJSON DappCap where
 instance FromJSON DappCap where
   parseJSON = genericParseJSON compactEncoding
 
-instance ToSchema DappCap where
-  declareNamedSchema = (swaggerDescription "a capability required by the transaction with amplifying information to help the user") .
-                       lensyDeclareNamedSchema 10
-
 data SigningRequest = SigningRequest
   { _signingRequest_code :: Text
   , _signingRequest_data :: Maybe Object
@@ -98,10 +84,6 @@ instance ToJSON SigningRequest where
 instance FromJSON SigningRequest where
   parseJSON = genericParseJSON compactEncoding
 
-instance ToSchema SigningRequest where
-  declareNamedSchema = (swaggerDescription "transaction information sent to the wallet for signing") .
-                       lensyDeclareNamedSchema 16
-
 data SigningResponse = SigningResponse
   { _signingResponse_body :: Command Text
   , _signingResponse_chainId :: ChainId
@@ -114,30 +96,11 @@ instance ToJSON SigningResponse where
 instance FromJSON SigningResponse where
   parseJSON = genericParseJSON compactEncoding
 
-instance ToSchema SigningResponse where
-  declareNamedSchema = (swaggerDescription "wallet response that includes the signed transaction") .
-                       lensyDeclareNamedSchema 17
-
 type SigningApi = "v1" :> V1SigningApi
 type V1SigningApi = "sign" :> ReqBody '[JSON] SigningRequest :> Post '[JSON] SigningResponse
 
 signingAPI :: Proxy SigningApi
 signingAPI = Proxy
-
-signingSwagger :: Swagger
-signingSwagger = toSwagger signingAPI
-  & info.title .~ "Kadena Wallet Signing API"
-  & info.version .~ "1.0"
-  & info.description ?~ apiDesc
-  & info.license ?~ "BSD3"
-  & info.contact ?~ Contact (Just "Kadena LLC") (Just $ URL "https://kadena.io") (Just "info@kadena.io")
-  & host ?~ Host "localhost" (Just 9467)
-
-apiDesc :: Text
-apiDesc = T.unlines
-  [ "This API facilitates communication between dapps and wallets. This frees dapp developers from the complexity of managing private keys, allowing them to focus on the functionality and business logic of the application."
-  , "Whenever the dapp needs to send a signed transaction, all you have to do is make an AJAX request to this API on localhost port 9467 and the user's wallet app will handle all the details of transaction signing for you."
-  ]
 
 -- | Aeson encoding options for compact encoding.
 --
