@@ -1,0 +1,30 @@
+cabal-version:       2.4
+name:                kadena-signing-api-docs
+version:             0.1
+synopsis:            Doc generator for Signing API
+-- description:
+homepage:            https://github.com/kadena-io/signing-api
+bug-reports:         https://github.com/kadena-io/signing-api/issues
+license:             BSD-3-Clause
+license-file:        LICENSE
+author:              Doug Beardsley
+maintainer:          doug@kadena.io
+copyright:           Kadena LLC
+extra-source-files:  CHANGELOG.md
+
+executable gen-docs
+  main-is: main.hs
+  hs-source-dirs: exe
+  if impl(ghcjs)
+    buildable: False
+  build-depends:
+      aeson
+    , base
+    , bytestring ^>= 0.10
+    , kadena-signing-api
+    , lens >= 4.17 && < 4.19
+    , pact >= 3.3.0 && < 4.0
+    , servant-swagger ^>= 1.1
+    , swagger2 >= 2.4 && < 2.6
+    , text
+
