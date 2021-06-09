@@ -124,7 +124,7 @@ instance ToJSON QuickSignResponse where
 
 instance FromJSON QuickSignResponse where
   parseJSON = withObject "QuickSignResponse" $ \o -> do
-    results <- o .: "resuls"
+    results <- o .: "results"
     pure $ QuickSignResponse results
 
 type SigningApi = "v1" :> V1SigningApi
