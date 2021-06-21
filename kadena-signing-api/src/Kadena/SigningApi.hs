@@ -7,11 +7,9 @@
 
 module Kadena.SigningApi where
 
-import Control.Lens hiding ((.=))
+import Control.Lens
 import Data.Aeson
 import qualified Data.Aeson as A
-import Data.HashMap.Strict (HashMap)
-import qualified Data.HashMap.Strict as HM
 import qualified Data.List.Split as L
 import Data.Proxy
 import Data.Text (Text)
@@ -21,11 +19,8 @@ import GHC.Generics
 import Pact.Server.API
 import Pact.Types.Capability (SigCapability(..))
 import Pact.Types.ChainMeta (TTLSeconds(..))
-import Pact.Types.Crypto (PublicKeyBS(..), SignatureBS(..))
 import Pact.Types.Runtime (GasLimit(..), ChainId, PublicKey)
 import Pact.Types.Command (Command)
-import Pact.Types.SigData
-
 import Servant.API
 
 newtype AccountName = AccountName

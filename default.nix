@@ -1,16 +1,19 @@
 { kpkgs ? import ./dep/kpkgs {}}:
 let
-  pactSrc = kpkgs.pkgs.fetchFromGitHub {
-    owner = "kadena-io";
-    repo = "pact";
-    rev = "853d255202d590e133aed16ee8a117b55e9bc623";
-    sha256 = "1jzh1nca93z7dsm7rllfnni0lfasv10d4xm7x5yw9q37if2lssb3";
-  };
+  nix-thunk-src = (kpkgs.pkgs.fetchFromGitHub {
+    owner = "obsidiansystems";
+    repo = "nix-thunk";
+    rev = "bab7329163fce579eaa9cfba67a4851ab806b76f";
+    sha256 = "0wn96xn6prjzcsh4n8p1n40wi8la53ym5h2frlqbfzas7isxwygg";
+  });
+  inherit (import nix-thunk-src {}) thunkSource;
+
+  pactSrc = thunkSource ./dep/pact ;
 
   signingProject = kpkgs.rp.project ({ pkgs, hackGet, ... }: with pkgs.haskell.lib; {
     name = "kadena-signing-api";
     overrides = self: super: {
-      pact = dontCheck ( addBuildDepend (self.callCabal2nix "pact" pactSrc {}) pkgs.z3);
+      pact = dontCheck (addBuildDepend (self.callCabal2nix "pact" pactSrc {}) pkgs.z3);
       pact-time = dontCheck (self.callHackageDirect {
         pkg = "pact-time";
         ver = "0.2.0.0";
