@@ -24,6 +24,8 @@ import Pact.Types.ChainMeta (TTLSeconds(..))
 import Pact.Types.Crypto (PublicKeyBS(..), SignatureBS(..))
 import Pact.Types.Runtime (GasLimit(..), ChainId, PublicKey)
 import Pact.Types.Command (Command)
+import Pact.Types.SigData
+
 import Servant.API
 
 newtype AccountName = AccountName
@@ -113,22 +115,17 @@ instance FromJSON QuickSignRequest where
     cmd <- o .: "cmds"
     pure $ QuickSignRequest cmd
 
-data QuickSignResponse = QuickSignResponse
-  { _quickSignResponse_hash :: Text
-  , _quickSignResponse_sigs :: HashMap PublicKeyBS SignatureBS
-  } deriving (Eq,Generic)
+newtype QuickSignResponse = 
+  QuickSignResponse { unQuickSignResponse :: [ SigData Text ]}
+  deriving (Eq,Generic)
 
 instance ToJSON QuickSignResponse where
-  toJSON a = object
-    [ "hash" .= _quickSignResponse_hash a
-    , "sigs" .= _quickSignResponse_sigs a
-    ]
+  toJSON a = object [ "results" .= unQuickSignResponse a ]
 
 instance FromJSON QuickSignResponse where
   parseJSON = withObject "QuickSignResponse" $ \o -> do
-    hash <- o .: "hash"
-    sigs <- o .: "sigs"
-    pure $ QuickSignResponse hash sigs
+    results <- o .: "results"
+    pure $ QuickSignResponse results
 
 type SigningApi = "v1" :> V1SigningApi
 type V1SigningApi = "sign" :> ReqBody '[JSON] SigningRequest :> Post '[JSON] SigningResponse
