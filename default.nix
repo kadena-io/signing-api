@@ -1,18 +1,24 @@
-{ pactRef ? "ace18a2489bf86595af09316bd1c09794c326b77"
-, pactSha ? "13cg8nz8lc839xnfp31yj8ihra5qpgfz9g4lzqmgcfk4kmxcvlxi"
-, kpkgs ? import ./dep/kpkgs {}
-}:
-
+{ kpkgs ? import ./dep/kpkgs {}}:
 let
-pactSrc = builtins.fetchTarball {
-  url = "https://github.com/kadena-io/pact/archive/${pactRef}.tar.gz";
-  sha256 = pactSha;
-};
+  nix-thunk-src = (kpkgs.pkgs.fetchFromGitHub {
+    owner = "obsidiansystems";
+    repo = "nix-thunk";
+    rev = "bab7329163fce579eaa9cfba67a4851ab806b76f";
+    sha256 = "0wn96xn6prjzcsh4n8p1n40wi8la53ym5h2frlqbfzas7isxwygg";
+  });
+  inherit (import nix-thunk-src {}) thunkSource;
 
-signingProject = kpkgs.rp.project ({ pkgs, hackGet, ... }: with pkgs.haskell.lib; {
+  pactSrc = thunkSource ./dep/pact ;
+
+  signingProject = kpkgs.rp.project ({ pkgs, hackGet, ... }: with pkgs.haskell.lib; {
     name = "kadena-signing-api";
     overrides = self: super: {
-      pact = dontCheck ( addBuildDepend (self.callCabal2nix "pact" pactSrc {}) pkgs.z3);
+      pact = dontCheck (addBuildDepend (self.callCabal2nix "pact" pactSrc {}) pkgs.z3);
+      pact-time = dontCheck (self.callHackageDirect {
+        pkg = "pact-time";
+        ver = "0.2.0.0";
+        sha256 = "1cfn74j6dr4279bil9k0n1wff074sdlz6g1haqyyy38wm5mdd7mr";
+      } {});
     };
 
     packages = {

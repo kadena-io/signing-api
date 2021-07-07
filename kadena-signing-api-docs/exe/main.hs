@@ -1,5 +1,3 @@
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module Main where
@@ -11,9 +9,8 @@ import qualified Data.ByteString.Lazy as BSL
 import Data.Swagger
 import Data.Text (Text)
 import qualified Data.Text as T
-import Pact.Types.Swagger -- TODO: remove this dep
+import PactSwagger
 import Servant.Swagger
-
 import Kadena.SigningApi
 
 instance ToSchema AccountName where
