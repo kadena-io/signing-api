@@ -1,6 +1,9 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE GADTs #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE KindSignatures #-}
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE TypeOperators #-}
@@ -10,6 +13,7 @@ module Kadena.SigningApi where
 import Control.Lens
 import Data.Aeson
 import qualified Data.Aeson as A
+import Data.Kind (Type)
 import qualified Data.List.Split as L
 import Data.Proxy
 import Data.Text (Text)
@@ -21,7 +25,9 @@ import Pact.Types.Capability (SigCapability(..))
 import Pact.Types.ChainMeta (TTLSeconds(..))
 import Pact.Types.Runtime (GasLimit(..), ChainId, PublicKey)
 import Pact.Types.Command (Command)
-import Servant.API
+import Trasa.Core
+import qualified Trasa.Method as M
+
 
 newtype AccountName = AccountName
   { unAccountName :: Text
@@ -96,12 +102,6 @@ instance ToJSON SigningResponse where
 instance FromJSON SigningResponse where
   parseJSON = genericParseJSON compactEncoding
 
-type SigningApi = "v1" :> V1SigningApi
-type V1SigningApi = "sign" :> ReqBody '[JSON] SigningRequest :> Post '[JSON] SigningResponse
-
-signingAPI :: Proxy SigningApi
-signingAPI = Proxy
-
 -- | Aeson encoding options for compact encoding.
 --
 --   We pass on the most compact sumEncoding as it could be unsound for certain types.
@@ -125,3 +125,35 @@ compactEncoding = defaultOptions
   where
     -- As long as names are not empty or just underscores this head should be fine:
     shortener = head . reverse . filter (/= "") . L.splitOn "_"
+
+--type SigningApi = "v1" :> V1SigningApi
+--type V1SigningApi = "sign" :> ReqBody '[JSON] SigningRequest :> Post '[JSON] SigningResponse
+--
+--signingAPI :: Proxy SigningApi
+--signingAPI = Proxy
+
+data Route :: [Type] -> [Param] -> Bodiedness -> Type -> Type where
+  SignR :: Route
+    '[]
+    '[]
+    (Body SigningRequest)
+    SigningResponse
+
+meta :: Route caps qrys req resp -> MetaCodec caps qrys req resp
+meta = \case
+  SignR -> Meta
+    (match "v1" ./ match "sign" ./ end)
+    qend
+    (body $ one bodySigningRequest)
+    (resp $ one bodySigningResponse)
+    M.post
+
+bodyAeson :: (ToJSON a, FromJSON a) => BodyCodec a
+bodyAeson = BodyCodec (pure "*/*") encode (bimap T.pack id . eitherDecode)
+
+bodySigningRequest :: BodyCodec SigningRequest
+bodySigningRequest = bodyAeson
+
+bodySigningResponse :: BodyCodec SigningResponse
+bodySigningResponse = bodyAeson
+

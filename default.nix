@@ -19,6 +19,11 @@ let
         ver = "0.2.0.0";
         sha256 = "1cfn74j6dr4279bil9k0n1wff074sdlz6g1haqyyy38wm5mdd7mr";
       } {});
+      trasa = dontCheck (self.callHackageDirect {
+        pkg = "trasa";
+        ver = "0.4.1";
+        sha256 = "1j8kpp4qhnpgnyn7ix1ywxwgnhs02ap20mrhx3c1fbapr2ichl8s";
+      } {});
     };
 
     packages = {

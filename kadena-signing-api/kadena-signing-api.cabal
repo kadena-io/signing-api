@@ -21,7 +21,7 @@ library
     , data-default ^>= 0.7
     , lens >= 4.17 && < 4.19
     , pact >= 4.0.0.11
-    , servant >= 0.15 && < 0.17
+    , trasa >= 0.4.1 && < 0.5
     , split ^>= 0.2
     , text >= 1.0 && < 1.3
 
