@@ -139,8 +139,8 @@ data Route :: [Type] -> [Param] -> Bodiedness -> Type -> Type where
     (Body SigningRequest)
     SigningResponse
 
-meta :: Route caps qrys req resp -> MetaCodec caps qrys req resp
-meta = \case
+signingApiMeta :: Route caps qrys req resp -> MetaCodec caps qrys req resp
+signingApiMeta = \case
   SignR -> Meta
     (match "v1" ./ match "sign" ./ end)
     qend
