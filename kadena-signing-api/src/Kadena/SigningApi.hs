@@ -7,7 +7,7 @@
 
 module Kadena.SigningApi where
 
-import Control.Lens
+import Control.Lens hiding ((.=))
 import Data.Aeson
 import qualified Data.Aeson as A
 import qualified Data.List.Split as L
@@ -21,6 +21,7 @@ import Pact.Types.Capability (SigCapability(..))
 import Pact.Types.ChainMeta (TTLSeconds(..))
 import Pact.Types.Runtime (GasLimit(..), ChainId, PublicKey)
 import Pact.Types.Command (Command)
+import Pact.Types.SigData
 import Servant.API
 
 newtype AccountName = AccountName
