@@ -31,6 +31,14 @@ instance ToSchema SigningResponse where
   declareNamedSchema = (swaggerDescription "wallet response that includes the signed transaction") .
                        lensyDeclareNamedSchema 17
 
+instance ToSchema QuickSignRequest where
+  declareNamedSchema = (swaggerDescription "completed transaction bytes to be signed") .
+                       lensyDeclareNamedSchema 11
+
+instance ToSchema QuickSignResponse where
+  declareNamedSchema = (swaggerDescription "list of SigData") .
+                       lensyDeclareNamedSchema 11
+
 signingSwagger :: Swagger
 signingSwagger = toSwagger signingAPI
   & info.title .~ "Kadena Wallet Signing API"

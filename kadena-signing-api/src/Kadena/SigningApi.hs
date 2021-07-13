@@ -7,7 +7,7 @@
 
 module Kadena.SigningApi where
 
-import Control.Lens
+import Control.Lens hiding ((.=))
 import Data.Aeson
 import qualified Data.Aeson as A
 import qualified Data.List.Split as L
@@ -21,6 +21,7 @@ import Pact.Types.Capability (SigCapability(..))
 import Pact.Types.ChainMeta (TTLSeconds(..))
 import Pact.Types.Runtime (GasLimit(..), ChainId, PublicKey)
 import Pact.Types.Command (Command)
+import Pact.Types.SigData
 import Servant.API
 
 newtype AccountName = AccountName
@@ -96,8 +97,35 @@ instance ToJSON SigningResponse where
 instance FromJSON SigningResponse where
   parseJSON = genericParseJSON compactEncoding
 
+newtype QuickSignRequest = QuickSignRequest
+  { _quickSignRequest_commands :: [Text]
+  } deriving (Eq,Ord,Generic)
+
+instance ToJSON QuickSignRequest where
+  toJSON a = object
+    [ "cmds" .= _quickSignRequest_commands a
+    ]
+
+instance FromJSON QuickSignRequest where
+  parseJSON = withObject "QuickSignRequest" $ \o -> do
+    cmd <- o .: "cmds"
+    pure $ QuickSignRequest cmd
+
+newtype QuickSignResponse = 
+  QuickSignResponse { unQuickSignResponse :: [ SigData Text ]}
+  deriving (Eq,Generic)
+
+instance ToJSON QuickSignResponse where
+  toJSON a = object [ "results" .= unQuickSignResponse a ]
+
+instance FromJSON QuickSignResponse where
+  parseJSON = withObject "QuickSignResponse" $ \o -> do
+    results <- o .: "results"
+    pure $ QuickSignResponse results
+
 type SigningApi = "v1" :> V1SigningApi
 type V1SigningApi = "sign" :> ReqBody '[JSON] SigningRequest :> Post '[JSON] SigningResponse
+               :<|> "quickSign" :> ReqBody '[JSON] QuickSignRequest :> Post '[JSON] QuickSignResponse
 
 signingAPI :: Proxy SigningApi
 signingAPI = Proxy
