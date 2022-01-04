@@ -99,6 +99,7 @@ instance FromJSON SigningResponse where
 type SigningApi = "v1" :> V1SigningApi
 type V1SigningApi = "sign" :> ReqBody '[JSON] SigningRequest :> Post '[JSON] SigningResponse
                     :<|> "sign-cont" :> ReqBody '[JSON] ContRequest :> Post '[JSON] SigningResponse
+
 signingAPI :: Proxy SigningApi
 signingAPI = Proxy
 

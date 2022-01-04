@@ -76,11 +76,12 @@ import Pact.Types.Exp
 import Pact.Types.Gas
 import Pact.Types.Hash
 import Pact.Types.Info (Info)
+import Pact.Types.PactError
 import Pact.Types.PactValue
 import Pact.Types.Persistence (TxId)
 import Pact.Types.Pretty
 import Pact.Types.SigData
-import Pact.Types.Runtime (PactError,PactErrorType,StackFrame,PactEvent)
+import Pact.Types.Runtime (PactError,PactErrorType,StackFrame,PactEvent, OutputType(..))
 import Pact.Types.Term
 import Pact.Types.Util
 
@@ -359,7 +360,8 @@ instance ToSchema Analyze.Request where
 
 instance ToSchema Analyze.Response where
   declareNamedSchema _ = namedSchema "AnalyzeResponse" $ sketchSchema $
-    Analyze.Response ["Dummy Response"]
+    Analyze.Response [RenderedOutput "Dummy Response" def OutputFailure]
+
 instance ToSchema (ModuleDef t) where
   declareNamedSchema = declareGenericSchema $
     (schemaOf $ swaggerType SwaggerObject)
