@@ -98,7 +98,7 @@ instance FromJSON SigningResponse where
 
 type SigningApi = "v1" :> V1SigningApi
 type V1SigningApi = "sign" :> ReqBody '[JSON] SigningRequest :> Post '[JSON] SigningResponse
-
+                    :<|> "sign-cont" :> ReqBody '[JSON] ContRequest :> Post '[JSON] SigningResponse
 signingAPI :: Proxy SigningApi
 signingAPI = Proxy
 
@@ -125,3 +125,27 @@ compactEncoding = defaultOptions
   where
     -- As long as names are not empty or just underscores this head should be fine:
     shortener = head . reverse . filter (/= "") . L.splitOn "_"
+
+data ContRequest = ContRequest
+  { _contRequest_pactId :: Text --TODO: b64
+  , _contRequest_rollback :: Bool
+  , _contRequest_step :: Int
+  , _contRequest_proof :: Maybe Text --Todo b64
+  , _contRequest_data :: Maybe Object
+  , _contRequest_caps :: [DappCap]
+  , _contRequest_nonce :: Maybe Text
+  , _contRequest_chainId :: Maybe ChainId
+  , _contRequest_gasLimit :: Maybe GasLimit
+  , _contRequest_ttl :: Maybe TTLSeconds
+  , _contRequest_sender :: Maybe AccountName
+  -- is extra signers needed?
+  , _contRequest_extraSigners :: Maybe [PublicKey]
+  } deriving (Show, Generic)
+
+instance ToJSON ContRequest where
+  toJSON = genericToJSON compactEncoding
+  toEncoding = genericToEncoding compactEncoding
+
+instance FromJSON ContRequest where
+  parseJSON = genericParseJSON compactEncoding
+
