@@ -34,6 +34,7 @@ let
     shellToolOverrides = ghc: super: {
       cabal-install = pkgs.haskellPackages.cabal-install;
       ghcid = pkgs.haskellPackages.ghcid;
+      spectacle = pkgs.spectacle;
     };
 
     shells = {

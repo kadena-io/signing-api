@@ -9,9 +9,11 @@ import qualified Data.ByteString.Lazy as BSL
 import Data.Swagger
 import Data.Text (Text)
 import qualified Data.Text as T
+import Pact.Types.Util
 import PactSwagger
 import Servant.Swagger
 import Kadena.SigningApi
+import Kadena.SigningTypes
 
 instance ToSchema AccountName where
   declareNamedSchema = swaggerDescription desc .
@@ -30,6 +32,14 @@ instance ToSchema SigningRequest where
 instance ToSchema SigningResponse where
   declareNamedSchema = (swaggerDescription "wallet response that includes the signed transaction") .
                        lensyDeclareNamedSchema 17
+
+instance ToSchema CommandSigRequest where
+  declareNamedSchema _ =
+    swaggerDescription "the signature data for a command" $
+      namedSchema "CommandSigRequest" $ sketchSchema $
+        CommandSigRequest
+          (SignatureList [("acbe76b30ccaf57e269a0cd5eeeb7293e7e84c7d68e6244a64c4adf4d2df6ea1", Nothing)])
+          "<cmd here>"
 
 instance ToSchema QuickSignRequest where
   declareNamedSchema = (swaggerDescription "completed transaction bytes to be signed") .

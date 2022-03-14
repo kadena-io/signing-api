@@ -2,10 +2,6 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ScopedTypeVariables #-}
--- {-# LANGUAGE DataKinds #-}
--- {-# LANGUAGE GeneralizedNewtypeDeriving #-}
--- {-# LANGUAGE QuasiQuotes #-}
--- {-# LANGUAGE TypeOperators #-}
 
 module Kadena.SigningTypes where
 

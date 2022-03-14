@@ -10,7 +10,7 @@ import Data.Either (isLeft, isRight)
 import qualified Data.Char as Char
 import qualified Data.Text as T
 
-import Kadena.SigningApi (mkAccountName,isValidCharset)
+import Kadena.SigningTypes (mkAccountName,isValidCharset)
 
 prop_accountname_valid :: Property
 prop_accountname_valid = property $ do
