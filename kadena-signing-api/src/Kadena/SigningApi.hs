@@ -1,20 +1,14 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE TypeOperators #-}
 
 module Kadena.SigningApi where
 
 import Control.Lens hiding ((.=))
 import Data.Aeson
-import qualified Data.Aeson as A
-import qualified Data.List.Split as L
 import Data.Proxy
 import Data.Text (Text)
-import qualified Data.Text as T
-import qualified Data.Char as Char
 import GHC.Generics
 import Pact.Server.API
 import Pact.Types.Capability (SigCapability(..))
@@ -24,29 +18,7 @@ import Pact.Types.Command (Command)
 import Pact.Types.SigData
 import Servant.API
 
-newtype AccountName = AccountName
-  { unAccountName :: Text
-  } deriving (Eq, Ord, Show, Generic, ToJSON, FromJSON, ToJSONKey, FromJSONKey)
-
--- | Smart constructor for account names. The only restriction in the coin
--- contract (as it stands) appears to be that accounts can't be an empty string
-mkAccountName :: Text -> Either Text AccountName
-mkAccountName n =
-  if not (isValidCharset n) then Left "Invalid Character detected. Must be Latin1, no spaces, control characters or '|'"
-  else if not (isCorrectSize n) then Left "Incorrect length. Must be between 3 and 256 characters in length."
-  else Right $ AccountName n
-
-isCorrectSize :: Text -> Bool
-isCorrectSize n = let l = T.length n in l >= 3 && l <= 256
-
-isValidCharset :: Text -> Bool
-isValidCharset = T.all isValidAccountNameCharacter
-
-isValidAccountNameCharacter :: Char -> Bool
-isValidAccountNameCharacter char = Char.isLatin1 char
-  && not ( Char.isControl char ||
-           char == '\NUL'
-         )
+import Kadena.SigningTypes
 
 -- | Values of this type are supplied by the dapp author to the wallet so the
 -- wallet knows what capabilities need to be granted for the transaction.
@@ -98,8 +70,8 @@ instance FromJSON SigningResponse where
   parseJSON = genericParseJSON compactEncoding
 
 newtype QuickSignRequest = QuickSignRequest
-  { _quickSignRequest_commands :: [Text]
-  } deriving (Eq,Ord,Generic)
+  { _quickSignRequest_commands :: [CommandSigRequest]
+  } deriving (Eq,Generic)
 
 instance ToJSON QuickSignRequest where
   toJSON a = object
@@ -108,11 +80,11 @@ instance ToJSON QuickSignRequest where
 
 instance FromJSON QuickSignRequest where
   parseJSON = withObject "QuickSignRequest" $ \o -> do
-    cmd <- o .: "cmds"
+    cmd <- o .: "reqs"
     pure $ QuickSignRequest cmd
 
-newtype QuickSignResponse = 
-  QuickSignResponse { unQuickSignResponse :: [ SigData Text ]}
+newtype QuickSignResponse =
+  QuickSignResponse { unQuickSignResponse :: [ CommandSigRequest ]}
   deriving (Eq,Generic)
 
 instance ToJSON QuickSignResponse where
@@ -130,26 +102,3 @@ type V1SigningApi = "sign" :> ReqBody '[JSON] SigningRequest :> Post '[JSON] Sig
 signingAPI :: Proxy SigningApi
 signingAPI = Proxy
 
--- | Aeson encoding options for compact encoding.
---
---   We pass on the most compact sumEncoding as it could be unsound for certain types.
---
---   But we assume the following naming of constructor names (sum typs) and
---   field names (records): _TypeName_Blah and _typename_blah.
---
---   In particular we assume that only the string after the last underscore is
---   significant for distinguishing field names/constructor names. If this
---   assumption is not met this encoding might not result in the same decoding.
-compactEncoding :: Options
-compactEncoding = defaultOptions
-    { A.fieldLabelModifier = shortener
-    , A.allNullaryToStringTag = True
-    , A.constructorTagModifier = shortener
-    , A.omitNothingFields = True
-    , A.sumEncoding = ObjectWithSingleField
-    , A.unwrapUnaryRecords = True
-    , A.tagSingleConstructors = False
-    }
-  where
-    -- As long as names are not empty or just underscores this head should be fine:
-    shortener = head . reverse . filter (/= "") . L.splitOn "_"
