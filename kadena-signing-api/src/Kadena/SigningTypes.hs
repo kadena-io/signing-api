@@ -20,13 +20,14 @@ import qualified Data.Text as T
 import qualified Data.Text.Encoding as T
 import GHC.Generics
 
-import Pact.Parse
 import Pact.Types.Command
 import Pact.Types.Hash
+import Pact.Parse
 -- TODO: Rip out sig data dependency
 import Pact.Types.SigData
 
-newtype SignatureList = SignatureList  [(PublicKeyHex, Maybe UserSig)]
+newtype SignatureList =
+  SignatureList { unSignatureList :: [(PublicKeyHex, Maybe UserSig)] }
   deriving (Eq,Show,Generic)
 
 instance ToJSON SignatureList where
@@ -46,51 +47,51 @@ instance FromJSON SignatureList where
       g (k,String t) = pure (PublicKeyHex k, Just $ UserSig t)
       g (_,v) = typeMismatch "Signature should be String or Null" v
 
-data CommandSigRequest = CommandSigRequest
-  { _csr_sigs :: SignatureList
-  , _csr_cmd :: Text
+data CommandSigData = CommandSigData
+  { _csd_sigs :: SignatureList
+  , _csd_cmd :: Text
   } deriving (Eq,Show,Generic)
 
-instance ToJSON CommandSigRequest where
-  toJSON (CommandSigRequest s c) = object $
+instance ToJSON CommandSigData where
+  toJSON (CommandSigData s c) = object $
     [ "sigs" .= s
     , "cmd" .= c
     ]
 
-instance FromJSON CommandSigRequest where
-  parseJSON = withObject "CommandSigRequest" $ \o -> do
+instance FromJSON CommandSigData where
+  parseJSON = withObject "CommandSigData" $ \o -> do
     s <- o .: "sigs"
     c <- o .: "cmd"
-    pure $ CommandSigRequest s c
+    pure $ CommandSigData s c
 
-data HashSigRequest = HashSigRequest
-  { _hsr_sigs :: SignatureList
-  , _hsr_hash :: PactHash
+data HashSigData = HashSigData
+  { _hsd_sigs :: SignatureList
+  , _hsd_hash :: PactHash
   } deriving (Eq,Show,Generic)
 
-instance ToJSON HashSigRequest where
-  toJSON (HashSigRequest s h) = object $
+instance ToJSON HashSigData where
+  toJSON (HashSigData s h) = object $
     [ "sigs" .= s
     , "hash" .= h
     ]
 
-instance FromJSON HashSigRequest where
-  parseJSON = withObject "HashSigRequest" $ \o -> do
+instance FromJSON HashSigData where
+  parseJSON = withObject "HashSigData" $ \o -> do
     s <- o .: "sigs"
     h <- o .: "hash"
-    pure $ HashSigRequest s h
+    pure $ HashSigData s h
 
-commandToCommandSigRequest :: Command Text -> Either String CommandSigRequest
-commandToCommandSigRequest c = do
+commandToCommandSigData :: Command Text -> Either String CommandSigData
+commandToCommandSigData c = do
   let ep = traverse parsePact =<< (eitherDecodeStrict' $ T.encodeUtf8 $ _cmdPayload c)
   case ep :: Either String (Payload Value ParsedCode) of
     Left e -> Left $ "Error decoding payload: " <> e
     Right p -> do
       let sigs = map (\s -> (PublicKeyHex $ _siPubKey s, Nothing)) $ _pSigners p
-      Right $ CommandSigRequest (SignatureList sigs) $ _cmdPayload c
+      Right $ CommandSigData (SignatureList sigs) $ _cmdPayload c
 
-commandSigRequestToCommand :: CommandSigRequest -> Either String (Command Text)
-commandSigRequestToCommand (CommandSigRequest (SignatureList sigList) c) = do
+commandSigDataToCommand :: CommandSigData -> Either String (Command Text)
+commandSigDataToCommand (CommandSigData (SignatureList sigList) c) = do
   payload :: Payload Value ParsedCode <- traverse parsePact =<< eitherDecodeStrict' (T.encodeUtf8 c)
   let sigMap = M.fromList sigList
   -- It is ok to use a map here because we're iterating over the signers list and only using the map for lookup.

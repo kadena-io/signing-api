@@ -70,7 +70,7 @@ instance FromJSON SigningResponse where
   parseJSON = genericParseJSON compactEncoding
 
 newtype QuickSignRequest = QuickSignRequest
-  { _quickSignRequest_commands :: [CommandSigRequest]
+  { _quickSignRequest_commands :: [CommandSigData]
   } deriving (Eq,Generic)
 
 instance ToJSON QuickSignRequest where
@@ -84,7 +84,7 @@ instance FromJSON QuickSignRequest where
     pure $ QuickSignRequest cmd
 
 newtype QuickSignResponse =
-  QuickSignResponse { unQuickSignResponse :: [ CommandSigRequest ]}
+  QuickSignResponse { unQuickSignResponse :: [ CommandSigData ]}
   deriving (Eq,Generic)
 
 instance ToJSON QuickSignResponse where

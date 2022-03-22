@@ -33,13 +33,21 @@ instance ToSchema SigningResponse where
   declareNamedSchema = (swaggerDescription "wallet response that includes the signed transaction") .
                        lensyDeclareNamedSchema 17
 
-instance ToSchema CommandSigRequest where
+instance ToSchema CommandSigData where
   declareNamedSchema _ =
     swaggerDescription "the signature data for a command" $
-      namedSchema "CommandSigRequest" $ sketchSchema $
-        CommandSigRequest
+      namedSchema "CommandSigData" $ sketchSchema $
+        CommandSigData
           (SignatureList [("acbe76b30ccaf57e269a0cd5eeeb7293e7e84c7d68e6244a64c4adf4d2df6ea1", Nothing)])
           "<cmd here>"
+
+instance ToSchema HashSigData where
+  declareNamedSchema _ =
+    swaggerDescription "the signature data for a hash" $
+      namedSchema "HashSigData" $ sketchSchema $
+        CommandSigData
+          (SignatureList [("acbe76b30ccaf57e269a0cd5eeeb7293e7e84c7d68e6244a64c4adf4d2df6ea1", Nothing)])
+          "<hash here>"
 
 instance ToSchema QuickSignRequest where
   declareNamedSchema = (swaggerDescription "completed transaction bytes to be signed") .
