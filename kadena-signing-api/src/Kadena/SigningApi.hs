@@ -75,7 +75,7 @@ newtype QuickSignRequest = QuickSignRequest
 
 instance ToJSON QuickSignRequest where
   toJSON a = object
-    [ "cmds" .= _quickSignRequest_commands a
+    [ "reqs" .= _quickSignRequest_commands a
     ]
 
 instance FromJSON QuickSignRequest where
