@@ -28,7 +28,7 @@ import Pact.Types.SigData
 
 newtype SignatureList =
   SignatureList { unSignatureList :: [(PublicKeyHex, Maybe UserSig)] }
-  deriving (Eq,Show, Semigroup, Monoid, Generic)
+  deriving (Eq, Ord, Show, Semigroup, Monoid, Generic)
 
 instance ToJSON SignatureList where
   toJSON (SignatureList sl ) = object $
@@ -50,7 +50,7 @@ instance FromJSON SignatureList where
 data CommandSigData = CommandSigData
   { _csd_sigs :: SignatureList
   , _csd_cmd :: Text
-  } deriving (Eq,Show,Generic)
+  } deriving (Eq,Ord,Show,Generic)
 
 instance ToJSON CommandSigData where
   toJSON (CommandSigData s c) = object $
