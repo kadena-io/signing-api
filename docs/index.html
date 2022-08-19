@@ -51,7 +51,6 @@
           <a href="#definition-AccountName"> AccountName </a>
           <a href="#definition-PublicKey"> PublicKey </a>
           <a href="#definition-QuickSignResponse"> QuickSignResponse </a>
-          <a href="#definition-CommandSigData"> CommandSigData </a>
           <a href="#definition-QuickSignRequest"> QuickSignRequest </a>
         </nav>
       </div>
@@ -244,7 +243,7 @@
                   <html>
                   <head></head>
                   <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">"equest_commands"</span>: [
+  <span class="hljs-attr">"reqs"</span>: [
     {
       <span class="hljs-attr">"sigs"</span>: {
         <span class="hljs-attr">"acbe76b30ccaf57e269a0cd5eeeb7293e7e84c7d68e6244a64c4adf4d2df6ea1"</span>: <span class="hljs-literal">null</span>
@@ -296,10 +295,10 @@
                   <html>
                   <head></head>
                   <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">"response"</span>: [
+  <span class="hljs-attr">"results"</span>: [
     {
       <span class="hljs-attr">"sigs"</span>: {
-        <span class="hljs-attr">"acbe76b30ccaf57e269a0cd5eeeb7293e7e84c7d68e6244a64c4adf4d2df6ea1"</span>: <span class="hljs-literal">null</span>
+        <span class="hljs-attr">"acbe76b30ccaf57e269a0cd5eeeb7293e7e84c7d68e6244a64c4adf4d2df6ea1"</span>: <span class="hljs-string">"e103338c324190c0e86f06e2fdcc886df42562c5d74a2216c8b2cc729d255686ec5488693569da6afc57a02af5e4ec5bd013c24b4fcddd94cc94eb412e88a20d"</span>
       },
       <span class="hljs-attr">"cmd"</span>: <span class="hljs-string">"&lt;cmd here&gt;"</span>
     }
@@ -949,25 +948,46 @@
                 </section>
                 <section class="json-schema-properties">
                   <dl>
-                    <dt data-property-name="response">
-                      <span class="json-property-name">response:</span>
-                      <span class="json-property-type">
-                        <span class="json-schema-ref-array">
-                          <a class="json-schema-ref" href="#/definitions/CommandSigData">CommandSigData</a>
-                        </span>
-                      </span>
+                    <dt data-property-name="results">
+                      <span class="json-property-name">results:</span>
+                      <span class="json-property-type">object[]</span>
                       <span class="json-property-range" title="Value limits"></span>
                       <span class="json-property-required"></span>
                     </dt>
                     <dt class="json-inner-schema">
                       <section class="json-schema-array-items">
-                        <span class="json-property-type">
-                          <span class="">
-                            <a class="json-schema-ref" href="#/definitions/CommandSigData">CommandSigData</a>
-                          </span>
-                        </span>
+                        <span class="json-property-type">object</span>
                         <span class="json-property-range" title="Value limits"></span>
-                        <div class="json-inner-schema"> </div>
+                        <div class="json-inner-schema">
+                          <section class="json-schema-properties">
+                            <dl>
+                              <dt data-property-name="sigs">
+                                <span class="json-property-name">sigs:</span>
+                                <span class="json-property-type">object</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                                <span class="json-property-required"></span>
+                              </dt>
+                              <dt class="json-inner-schema">
+                                <section class="json-schema-properties">
+                                  <dl>
+                                    <dt data-property-name="acbe76b30ccaf57e269a0cd5eeeb7293e7e84c7d68e6244a64c4adf4d2df6ea1">
+                                      <span class="json-property-name">acbe76b30ccaf57e269a0cd5eeeb7293e7e84c7d68e6244a64c4adf4d2df6ea1:</span>
+                                      <span class="json-property-type">string</span>
+                                      <span class="json-property-range" title="Value limits"></span>
+                                      <span class="json-property-required"></span>
+                                    </dt>
+                                  </dl>
+                                </section>
+                              </dt>
+                              <dt data-property-name="cmd">
+                                <span class="json-property-name">cmd:</span>
+                                <span class="json-property-type">string</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                                <span class="json-property-required"></span>
+                              </dt>
+                            </dl>
+                          </section>
+                        </div>
                       </section>
                     </dt>
                   </dl>
@@ -980,76 +1000,14 @@
                   <html>
                   <head></head>
                   <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">"response"</span>: [
+  <span class="hljs-attr">"results"</span>: [
     {
       <span class="hljs-attr">"sigs"</span>: {
-        <span class="hljs-attr">"acbe76b30ccaf57e269a0cd5eeeb7293e7e84c7d68e6244a64c4adf4d2df6ea1"</span>: <span class="hljs-literal">null</span>
+        <span class="hljs-attr">"acbe76b30ccaf57e269a0cd5eeeb7293e7e84c7d68e6244a64c4adf4d2df6ea1"</span>: <span class="hljs-string">"e103338c324190c0e86f06e2fdcc886df42562c5d74a2216c8b2cc729d255686ec5488693569da6afc57a02af5e4ec5bd013c24b4fcddd94cc94eb412e88a20d"</span>
       },
       <span class="hljs-attr">"cmd"</span>: <span class="hljs-string">"&lt;cmd here&gt;"</span>
     }
   ]
-}
-</code></pre> </body>
-                  </html>
-                  <!-- </div> -->
-                </section>
-              </div>
-            </div>
-          </div>
-          <div id="definition-CommandSigData" class="definition panel" data-traverse-target="definition-CommandSigData">
-            <h2 class="panel-title">
-              <a name="/definitions/CommandSigData"></a>CommandSigData: object
-              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
-              <span class="json-property-range" title="Value limits"></span>
-              
-              
-              </span> -->
-            </h2>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="json-schema-description">
-                  <p>the signature data for a command</p>
-                </section>
-                <section class="json-schema-properties">
-                  <dl>
-                    <dt data-property-name="sigs">
-                      <span class="json-property-name">sigs:</span>
-                      <span class="json-property-type">object</span>
-                      <span class="json-property-range" title="Value limits"></span>
-                      <span class="json-property-required"></span>
-                    </dt>
-                    <dt class="json-inner-schema">
-                      <section class="json-schema-properties">
-                        <dl>
-                          <dt data-property-name="acbe76b30ccaf57e269a0cd5eeeb7293e7e84c7d68e6244a64c4adf4d2df6ea1">
-                            <span class="json-property-name">acbe76b30ccaf57e269a0cd5eeeb7293e7e84c7d68e6244a64c4adf4d2df6ea1:</span>
-                            <span class="json-property-type">null</span>
-                            <span class="json-property-range" title="Value limits"></span>
-                            <span class="json-property-required"></span>
-                          </dt>
-                        </dl>
-                      </section>
-                    </dt>
-                    <dt data-property-name="cmd">
-                      <span class="json-property-name">cmd:</span>
-                      <span class="json-property-type">string</span>
-                      <span class="json-property-range" title="Value limits"></span>
-                      <span class="json-property-required"></span>
-                    </dt>
-                  </dl>
-                </section>
-              </div>
-              <div class="doc-examples">
-                <section>
-                  <h5>Example</h5>
-                  <!-- <div class="hljs"> -->
-                  <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">"sigs"</span>: {
-    <span class="hljs-attr">"acbe76b30ccaf57e269a0cd5eeeb7293e7e84c7d68e6244a64c4adf4d2df6ea1"</span>: <span class="hljs-literal">null</span>
-  },
-  <span class="hljs-attr">"cmd"</span>: <span class="hljs-string">"&lt;cmd here&gt;"</span>
 }
 </code></pre> </body>
                   </html>
@@ -1074,25 +1032,46 @@
                 </section>
                 <section class="json-schema-properties">
                   <dl>
-                    <dt data-property-name="equest_commands">
-                      <span class="json-property-name">equest_commands:</span>
-                      <span class="json-property-type">
-                        <span class="json-schema-ref-array">
-                          <a class="json-schema-ref" href="#/definitions/CommandSigData">CommandSigData</a>
-                        </span>
-                      </span>
+                    <dt data-property-name="reqs">
+                      <span class="json-property-name">reqs:</span>
+                      <span class="json-property-type">object[]</span>
                       <span class="json-property-range" title="Value limits"></span>
                       <span class="json-property-required"></span>
                     </dt>
                     <dt class="json-inner-schema">
                       <section class="json-schema-array-items">
-                        <span class="json-property-type">
-                          <span class="">
-                            <a class="json-schema-ref" href="#/definitions/CommandSigData">CommandSigData</a>
-                          </span>
-                        </span>
+                        <span class="json-property-type">object</span>
                         <span class="json-property-range" title="Value limits"></span>
-                        <div class="json-inner-schema"> </div>
+                        <div class="json-inner-schema">
+                          <section class="json-schema-properties">
+                            <dl>
+                              <dt data-property-name="sigs">
+                                <span class="json-property-name">sigs:</span>
+                                <span class="json-property-type">object</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                                <span class="json-property-required"></span>
+                              </dt>
+                              <dt class="json-inner-schema">
+                                <section class="json-schema-properties">
+                                  <dl>
+                                    <dt data-property-name="acbe76b30ccaf57e269a0cd5eeeb7293e7e84c7d68e6244a64c4adf4d2df6ea1">
+                                      <span class="json-property-name">acbe76b30ccaf57e269a0cd5eeeb7293e7e84c7d68e6244a64c4adf4d2df6ea1:</span>
+                                      <span class="json-property-type">null</span>
+                                      <span class="json-property-range" title="Value limits"></span>
+                                      <span class="json-property-required"></span>
+                                    </dt>
+                                  </dl>
+                                </section>
+                              </dt>
+                              <dt data-property-name="cmd">
+                                <span class="json-property-name">cmd:</span>
+                                <span class="json-property-type">string</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                                <span class="json-property-required"></span>
+                              </dt>
+                            </dl>
+                          </section>
+                        </div>
                       </section>
                     </dt>
                   </dl>
@@ -1105,7 +1084,7 @@
                   <html>
                   <head></head>
                   <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">"equest_commands"</span>: [
+  <span class="hljs-attr">"reqs"</span>: [
     {
       <span class="hljs-attr">"sigs"</span>: {
         <span class="hljs-attr">"acbe76b30ccaf57e269a0cd5eeeb7293e7e84c7d68e6244a64c4adf4d2df6ea1"</span>: <span class="hljs-literal">null</span>
