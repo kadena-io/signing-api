@@ -10,20 +10,13 @@ import Data.Swagger
 import Data.Text (Text)
 import qualified Data.Text as T
 import Pact.Types.Util
+import Pact.Types.Command
 import PactSwagger
 import Servant.Swagger
 import Kadena.SigningApi
 import Kadena.SigningTypes
-
-instance ToSchema AccountName where
-  declareNamedSchema = swaggerDescription desc .
-                       declareGenericString
-    where
-      desc = "The name of an account in the coin contract. In the SigningRequest sender field, this will be the account used to pay the transaction's gas price."
-
-instance ToSchema DappCap where
-  declareNamedSchema = (swaggerDescription "a capability required by the transaction with amplifying information to help the user") .
-                       lensyDeclareNamedSchema 10
+import Pact.Types.Hash
+import Pact.Types.SigData
 
 instance ToSchema SigningRequest where
   declareNamedSchema = (swaggerDescription "transaction information sent to the wallet for signing") .
@@ -33,21 +26,40 @@ instance ToSchema SigningResponse where
   declareNamedSchema = (swaggerDescription "wallet response that includes the signed transaction") .
                        lensyDeclareNamedSchema 17
 
+instance ToSchema AccountName where
+  declareNamedSchema = swaggerDescription desc .
+                       declareGenericString
+    where
+      desc = "The name of an account in the coin contract. In the SigningRequest sender field, this will be the account used to pay the transaction's gas price."
+
+instance ToSchema DappCap where
+  declareNamedSchema = (swaggerDescription "a capability required by the transaction with amplifying information to help the user") .
+                       lensyDeclareNamedSchema 9
+
 instance ToSchema CommandSigData where
   declareNamedSchema _ =
     swaggerDescription "the signature data for a command" $
       namedSchema "CommandSigData" $ sketchSchema $
-        CommandSigData
-          (SignatureList [("acbe76b30ccaf57e269a0cd5eeeb7293e7e84c7d68e6244a64c4adf4d2df6ea1", Nothing)])
-          "<cmd here>"
+        let (cmd, _, sl) = dummyCmdHashSL
+         in CommandSigData sl cmd
 
-instance ToSchema HashSigData where
-  declareNamedSchema _ =
-    swaggerDescription "the signature data for a hash" $
-      namedSchema "HashSigData" $ sketchSchema $
-        CommandSigData
-          (SignatureList [("acbe76b30ccaf57e269a0cd5eeeb7293e7e84c7d68e6244a64c4adf4d2df6ea1", Nothing)])
-          "<hash here>"
+dummyCmdHashSL :: (Text, Text, SignatureList)
+dummyCmdHashSL = (dummyCmd, dummyHash, dummySL)
+  where
+    dummyHash = "LstLd5VfY5tex9SYXPxrhr3qTLovDdiWbEfpEPsLu8s"
+    dummySL =  SignatureList
+      [ (PublicKeyHex "ae18efd16cbd49e9a92552a2589ac01491b486fbcbb1e3f07980f945597e2033",
+           Just $ UserSig "a8b9ea0fbe6b8f59917908bbd2ec473af4ba30c62e2cbab9981f7f5f62941cbb79aee832efc38675fac42a658192ba7387bbbc61017b2ca9b2f2115bc1f4c503")
+      , (PublicKeyHex "fa781bdd858cd2380b5e2b654e58035f7189a6e8158686a1bb7eabb585a56e7f", Nothing)
+      ]
+    dummyCmd = "{\"networkId\":\"testnet04\",\"payload\":{\"exec\":{\"data\":null,\"code\":\"(+ 1 2)\"}},\"signers\":[{\"pubKey\":\"ae18efd16cbd49e9a92552a2589ac01491b486fbcbb1e3f07980f945597e2033\",\"clist\":[{\"args\":[],\"name\":\"coin.GAS\"}]},{\"pubKey\":\"fa781bdd858cd2380b5e2b654e58035f7189a6e8158686a1bb7eabb585a56e7f\"}],\"meta\":{\"creationTime\":1663085494,\"ttl\":1800,\"gasLimit\":20,\"chainId\":\"0\",\"gasPrice\":1.0e-6,\"sender\":\"ae18efd16cbd49e9a92552a2589ac01491b486fbcbb1e3f07980f945597e2033\"},\"nonce\":\"2022-09-13 16:11:34.678231 UTC\"}"
+
+-- instance ToSchema HashSigData where
+--   declareNamedSchema _ =
+--     swaggerDescription "the signature data for a hash" $
+--       namedSchema "HashSigData" $ sketchSchema $
+--         let (_, hash, sl) = dummyCmdHashSL
+--          in HashSigData sl $ hash
 
 instance ToSchema QuickSignRequest where
   declareNamedSchema = (swaggerDescription "completed transaction bytes to be signed") .
@@ -55,6 +67,13 @@ instance ToSchema QuickSignRequest where
 
 instance ToSchema QuickSignResponse where
   declareNamedSchema = (swaggerDescription "list of SigData") .
+                       lensyDeclareNamedSchema 11
+
+instance ToSchema PublicKeyHex where
+  declareNamedSchema = declareGenericString
+
+instance ToSchema SignatureList where
+  declareNamedSchema = (swaggerDescription "ordered list of signers and possible signatures") .
                        lensyDeclareNamedSchema 11
 
 signingSwagger :: Swagger

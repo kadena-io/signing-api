@@ -28,6 +28,14 @@
           <!-- </li> -->
           <!-- </ul>
               </section> -->
+          <!-- <section>
+                <a href="#path--v1-quickSign">/v1/quickSign</a>
+                <ul> -->
+          <!-- <li> -->
+          <a href="#operation--v1-quickSign-post"> POST /v1/quickSign </a>
+          <!-- </li> -->
+          <!-- </ul>
+              </section> -->
           <h5>Schema Definitions</h5>
           <a href="#definition-SigningResponse"> SigningResponse </a>
           <a href="#definition-Command"> Command </a>
@@ -41,6 +49,10 @@
           <a href="#definition-GasLimit"> GasLimit </a>
           <a href="#definition-TTLSeconds"> TTLSeconds </a>
           <a href="#definition-AccountName"> AccountName </a>
+          <a href="#definition-PublicKey"> PublicKey </a>
+          <a href="#definition-QuickSignResponse"> QuickSignResponse </a>
+          <a href="#definition-CommandSigData"> CommandSigData </a>
+          <a href="#definition-QuickSignRequest"> QuickSignRequest </a>
         </nav>
       </div>
       <div id="docs" class="row collapse expanded drawer" data-drawer>
@@ -55,8 +67,7 @@
           <div id="introduction" data-traverse-target="introduction">
             <div class="doc-row">
               <div class="doc-copy">
-                <p>This API facilitates communication between dapps and wallets. This frees dapp developers from the complexity of managing private keys, allowing them to focus on the functionality and business logic of the application.`</p>
-                <p>Whenever the dapp needs to send a signed transaction, all you have to do is make an AJAX request to this API on localhost port 9467 and the user&#39;s wallet app will handle all the details of transaction signing for you.</p>
+                <p>This API facilitates communication between dapps and wallets. This frees dapp developers from the complexity of managing private keys, allowing them to focus on the functionality and business logic of the application. Whenever the dapp needs to send a signed transaction, all you have to do is make an AJAX request to this API on localhost port 9467 and the user&#39;s wallet app will handle all the details of transaction signing for you.</p>
               </div>
               <div class="doc-examples">
                 <section>
@@ -111,26 +122,29 @@
                   <html>
                   <head></head>
                   <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;code&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-  <span class="hljs-attr">&quot;data&quot;</span>: <span class="hljs-string">&quot;object&quot;</span>,
-  <span class="hljs-attr">&quot;caps&quot;</span>: [
+  <span class="hljs-attr">"code"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"data"</span>: <span class="hljs-string">"object"</span>,
+  <span class="hljs-attr">"caps"</span>: [
     {
-      <span class="hljs-attr">&quot;role&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-      <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-      <span class="hljs-attr">&quot;cap&quot;</span>: {
-        <span class="hljs-attr">&quot;args&quot;</span>: [
-          <span class="hljs-string">&quot;arg1&quot;</span>,
-          <span class="hljs-string">&quot;arg2&quot;</span>
+      <span class="hljs-attr">"role"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"description"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"cap"</span>: {
+        <span class="hljs-attr">"args"</span>: [
+          <span class="hljs-string">"arg1"</span>,
+          <span class="hljs-string">"arg2"</span>
         ],
-        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;foo.bar&quot;</span>
+        <span class="hljs-attr">"name"</span>: <span class="hljs-string">"foo.bar"</span>
       }
     }
   ],
-  <span class="hljs-attr">&quot;nonce&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-  <span class="hljs-attr">&quot;chainId&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-  <span class="hljs-attr">&quot;gasLimit&quot;</span>: <span class="hljs-string">&quot;number&quot;</span>,
-  <span class="hljs-attr">&quot;ttl&quot;</span>: <span class="hljs-string">&quot;number&quot;</span>,
-  <span class="hljs-attr">&quot;sender&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+  <span class="hljs-attr">"nonce"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"chainId"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"gasLimit"</span>: <span class="hljs-string">"number"</span>,
+  <span class="hljs-attr">"ttl"</span>: <span class="hljs-string">"number"</span>,
+  <span class="hljs-attr">"sender"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"extraSigners"</span>: [
+    <span class="hljs-string">"string"</span>
+  ]
 }
 </code></pre> </body>
                   </html>
@@ -175,16 +189,135 @@
                   <html>
                   <head></head>
                   <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;body&quot;</span>: {
-    <span class="hljs-attr">&quot;cmd&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-    <span class="hljs-attr">&quot;sigs&quot;</span>: [
+  <span class="hljs-attr">"body"</span>: {
+    <span class="hljs-attr">"cmd"</span>: <span class="hljs-string">"string"</span>,
+    <span class="hljs-attr">"sigs"</span>: [
       {
-        <span class="hljs-attr">&quot;sig&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+        <span class="hljs-attr">"sig"</span>: <span class="hljs-string">"string"</span>
       }
     ],
-    <span class="hljs-attr">&quot;hash&quot;</span>: <span class="hljs-string">&quot;string (base64url)&quot;</span>
+    <span class="hljs-attr">"hash"</span>: <span class="hljs-string">"string (base64url)"</span>
   },
-  <span class="hljs-attr">&quot;chainId&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+  <span class="hljs-attr">"chainId"</span>: <span class="hljs-string">"string"</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <span id="path--v1-quickSign"></span>
+          <div id="operation--v1-quickSign-post" class="operation panel" data-traverse-target="operation--v1-quickSign-post">
+            <h2 class="operation-title">
+              <span class="operation-name">
+                <span class="operation-name">POST</span>
+                <span class="operation-path">/v1/quickSign</span>
+              </span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body">
+                  <div class="prop-row">
+                    <div class="prop-name">
+                      <div class="swagger-request-model">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/QuickSignRequest">QuickSignRequest</a>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value columns small-6">
+                      <!-- <div class="swagger-request-description"> -->
+                      <p>undefined</p>
+                      <!-- </div> -->
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Request Content-Types:
+                    <span>application/json;charset&#x3D;utf-8</span>
+                  </h5>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">"equest_commands"</span>: [
+    {
+      <span class="hljs-attr">"sigs"</span>: [
+        [
+          <span class="hljs-string">"ae18efd16cbd49e9a92552a2589ac01491b486fbcbb1e3f07980f945597e2033"</span>,
+          <span class="hljs-string">"a8b9ea0fbe6b8f59917908bbd2ec473af4ba30c62e2cbab9981f7f5f62941cbb79aee832efc38675fac42a658192ba7387bbbc61017b2ca9b2f2115bc1f4c503"</span>
+        ],
+        [
+          <span class="hljs-string">"fa781bdd858cd2380b5e2b654e58035f7189a6e8158686a1bb7eabb585a56e7f"</span>,
+          <span class="hljs-literal">null</span>
+        ]
+      ],
+      <span class="hljs-attr">"cmd"</span>: <span class="hljs-string">"{\"networkId\":\"testnet04\",\"payload\":{\"exec\":{\"data\":null,\"code\":\"(+ 1 2)\"}},\"signers\":[{\"pubKey\":\"ae18efd16cbd49e9a92552a2589ac01491b486fbcbb1e3f07980f945597e2033\",\"clist\":[{\"args\":[],\"name\":\"coin.GAS\"}]},{\"pubKey\":\"fa781bdd858cd2380b5e2b654e58035f7189a6e8158686a1bb7eabb585a56e7f\"}],\"meta\":{\"creationTime\":1663085494,\"ttl\":1800,\"gasLimit\":20,\"chainId\":\"0\",\"gasPrice\":1.0e-6,\"sender\":\"ae18efd16cbd49e9a92552a2589ac01491b486fbcbb1e3f07980f945597e2033\"},\"nonce\":\"2022-09-13 16:11:34.678231 UTC\"}"</span>
+    }
+  ]
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/QuickSignResponse">QuickSignResponse</a>
+                        </span>
+                      </div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value"> </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">400 Bad Request</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Invalid <code>body</code></p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <h5>Response Content-Types:
+                  <span>application/json;charset&#x3D;utf-8</span>
+                </h5>
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">"response"</span>: [
+    {
+      <span class="hljs-attr">"sigs"</span>: [
+        [
+          <span class="hljs-string">"ae18efd16cbd49e9a92552a2589ac01491b486fbcbb1e3f07980f945597e2033"</span>,
+          <span class="hljs-string">"a8b9ea0fbe6b8f59917908bbd2ec473af4ba30c62e2cbab9981f7f5f62941cbb79aee832efc38675fac42a658192ba7387bbbc61017b2ca9b2f2115bc1f4c503"</span>
+        ],
+        [
+          <span class="hljs-string">"fa781bdd858cd2380b5e2b654e58035f7189a6e8158686a1bb7eabb585a56e7f"</span>,
+          <span class="hljs-literal">null</span>
+        ]
+      ],
+      <span class="hljs-attr">"cmd"</span>: <span class="hljs-string">"{\"networkId\":\"testnet04\",\"payload\":{\"exec\":{\"data\":null,\"code\":\"(+ 1 2)\"}},\"signers\":[{\"pubKey\":\"ae18efd16cbd49e9a92552a2589ac01491b486fbcbb1e3f07980f945597e2033\",\"clist\":[{\"args\":[],\"name\":\"coin.GAS\"}]},{\"pubKey\":\"fa781bdd858cd2380b5e2b654e58035f7189a6e8158686a1bb7eabb585a56e7f\"}],\"meta\":{\"creationTime\":1663085494,\"ttl\":1800,\"gasLimit\":20,\"chainId\":\"0\",\"gasPrice\":1.0e-6,\"sender\":\"ae18efd16cbd49e9a92552a2589ac01491b486fbcbb1e3f07980f945597e2033\"},\"nonce\":\"2022-09-13 16:11:34.678231 UTC\"}"</span>
+    }
+  ]
 }
 </code></pre> </body>
                   </html>
@@ -240,16 +373,16 @@
                   <html>
                   <head></head>
                   <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;body&quot;</span>: {
-    <span class="hljs-attr">&quot;cmd&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-    <span class="hljs-attr">&quot;sigs&quot;</span>: [
+  <span class="hljs-attr">"body"</span>: {
+    <span class="hljs-attr">"cmd"</span>: <span class="hljs-string">"string"</span>,
+    <span class="hljs-attr">"sigs"</span>: [
       {
-        <span class="hljs-attr">&quot;sig&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+        <span class="hljs-attr">"sig"</span>: <span class="hljs-string">"string"</span>
       }
     ],
-    <span class="hljs-attr">&quot;hash&quot;</span>: <span class="hljs-string">&quot;string (base64url)&quot;</span>
+    <span class="hljs-attr">"hash"</span>: <span class="hljs-string">"string (base64url)"</span>
   },
-  <span class="hljs-attr">&quot;chainId&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+  <span class="hljs-attr">"chainId"</span>: <span class="hljs-string">"string"</span>
 }
 </code></pre> </body>
                   </html>
@@ -321,13 +454,13 @@
                   <html>
                   <head></head>
                   <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;cmd&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-  <span class="hljs-attr">&quot;sigs&quot;</span>: [
+  <span class="hljs-attr">"cmd"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"sigs"</span>: [
     {
-      <span class="hljs-attr">&quot;sig&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+      <span class="hljs-attr">"sig"</span>: <span class="hljs-string">"string"</span>
     }
   ],
-  <span class="hljs-attr">&quot;hash&quot;</span>: <span class="hljs-string">&quot;string (base64url)&quot;</span>
+  <span class="hljs-attr">"hash"</span>: <span class="hljs-string">"string (base64url)"</span>
 }
 </code></pre> </body>
                   </html>
@@ -368,7 +501,7 @@
                   <html>
                   <head></head>
                   <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;sig&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+  <span class="hljs-attr">"sig"</span>: <span class="hljs-string">"string"</span>
 }
 </code></pre> </body>
                   </html>
@@ -507,6 +640,26 @@
                       </span>
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
+                    <dt data-property-name="extraSigners">
+                      <span class="json-property-name">extraSigners:</span>
+                      <span class="json-property-type">
+                        <span class="json-schema-ref-array">
+                          <a class="json-schema-ref" href="#/definitions/PublicKey">PublicKey</a>
+                        </span>
+                      </span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-array-items">
+                        <span class="json-property-type">
+                          <span class="">
+                            <a class="json-schema-ref" href="#/definitions/PublicKey">PublicKey</a>
+                          </span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                        <div class="json-inner-schema"> </div>
+                      </section>
+                    </dt>
                   </dl>
                 </section>
               </div>
@@ -517,26 +670,29 @@
                   <html>
                   <head></head>
                   <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;code&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-  <span class="hljs-attr">&quot;data&quot;</span>: <span class="hljs-string">&quot;object&quot;</span>,
-  <span class="hljs-attr">&quot;caps&quot;</span>: [
+  <span class="hljs-attr">"code"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"data"</span>: <span class="hljs-string">"object"</span>,
+  <span class="hljs-attr">"caps"</span>: [
     {
-      <span class="hljs-attr">&quot;role&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-      <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-      <span class="hljs-attr">&quot;cap&quot;</span>: {
-        <span class="hljs-attr">&quot;args&quot;</span>: [
-          <span class="hljs-string">&quot;arg1&quot;</span>,
-          <span class="hljs-string">&quot;arg2&quot;</span>
+      <span class="hljs-attr">"role"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"description"</span>: <span class="hljs-string">"string"</span>,
+      <span class="hljs-attr">"cap"</span>: {
+        <span class="hljs-attr">"args"</span>: [
+          <span class="hljs-string">"arg1"</span>,
+          <span class="hljs-string">"arg2"</span>
         ],
-        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;foo.bar&quot;</span>
+        <span class="hljs-attr">"name"</span>: <span class="hljs-string">"foo.bar"</span>
       }
     }
   ],
-  <span class="hljs-attr">&quot;nonce&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-  <span class="hljs-attr">&quot;chainId&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-  <span class="hljs-attr">&quot;gasLimit&quot;</span>: <span class="hljs-string">&quot;number&quot;</span>,
-  <span class="hljs-attr">&quot;ttl&quot;</span>: <span class="hljs-string">&quot;number&quot;</span>,
-  <span class="hljs-attr">&quot;sender&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+  <span class="hljs-attr">"nonce"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"chainId"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"gasLimit"</span>: <span class="hljs-string">"number"</span>,
+  <span class="hljs-attr">"ttl"</span>: <span class="hljs-string">"number"</span>,
+  <span class="hljs-attr">"sender"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"extraSigners"</span>: [
+    <span class="hljs-string">"string"</span>
+  ]
 }
 </code></pre> </body>
                   </html>
@@ -572,7 +728,7 @@
                   <!-- <div class="hljs"> -->
                   <html>
                   <head></head>
-                  <body><pre><code class="hljs language-json"><span class="hljs-string">&quot;object&quot;</span>
+                  <body><pre><code class="hljs language-json"><span class="hljs-string">"object"</span>
 </code></pre> </body>
                   </html>
                   <!-- </div> -->
@@ -628,14 +784,14 @@
                   <html>
                   <head></head>
                   <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;role&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
-  <span class="hljs-attr">&quot;cap&quot;</span>: {
-    <span class="hljs-attr">&quot;args&quot;</span>: [
-      <span class="hljs-string">&quot;arg1&quot;</span>,
-      <span class="hljs-string">&quot;arg2&quot;</span>
+  <span class="hljs-attr">"role"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"description"</span>: <span class="hljs-string">"string"</span>,
+  <span class="hljs-attr">"cap"</span>: {
+    <span class="hljs-attr">"args"</span>: [
+      <span class="hljs-string">"arg1"</span>,
+      <span class="hljs-string">"arg2"</span>
     ],
-    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;foo.bar&quot;</span>
+    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"foo.bar"</span>
   }
 }
 </code></pre> </body>
@@ -690,11 +846,11 @@
                   <html>
                   <head></head>
                   <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;args&quot;</span>: [
-    <span class="hljs-string">&quot;arg1&quot;</span>,
-    <span class="hljs-string">&quot;arg2&quot;</span>
+  <span class="hljs-attr">"args"</span>: [
+    <span class="hljs-string">"arg1"</span>,
+    <span class="hljs-string">"arg2"</span>
   ],
-  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;foo.bar&quot;</span>
+  <span class="hljs-attr">"name"</span>: <span class="hljs-string">"foo.bar"</span>
 }
 </code></pre> </body>
                   </html>
@@ -724,7 +880,7 @@
                   <!-- <div class="hljs"> -->
                   <html>
                   <head></head>
-                  <body><pre><code class="hljs language-json"><span class="hljs-string">&quot;number&quot;</span>
+                  <body><pre><code class="hljs language-json"><span class="hljs-string">"number"</span>
 </code></pre> </body>
                   </html>
                   <!-- </div> -->
@@ -753,7 +909,7 @@
                   <!-- <div class="hljs"> -->
                   <html>
                   <head></head>
-                  <body><pre><code class="hljs language-json"><span class="hljs-string">&quot;number&quot;</span>
+                  <body><pre><code class="hljs language-json"><span class="hljs-string">"number"</span>
 </code></pre> </body>
                   </html>
                   <!-- </div> -->
@@ -774,6 +930,223 @@
               <div class="doc-copy">
                 <section class="json-schema-description">
                   <p>The name of an account in the coin contract. In the SigningRequest sender field, this will be the account used to pay the transaction&#39;s gas price.</p>
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-PublicKey" class="definition panel" data-traverse-target="definition-PublicKey">
+            <h2 class="panel-title">
+              <a name="/definitions/PublicKey"></a>PublicKey: string
+              <!-- <span class="json-property-type"><span class="json-property-type">string</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy"> </div>
+            </div>
+          </div>
+          <div id="definition-QuickSignResponse" class="definition panel" data-traverse-target="definition-QuickSignResponse">
+            <h2 class="panel-title">
+              <a name="/definitions/QuickSignResponse"></a>QuickSignResponse: object
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>list of SigData</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="response">
+                      <span class="json-property-name">response:</span>
+                      <span class="json-property-type">
+                        <span class="json-schema-ref-array">
+                          <a class="json-schema-ref" href="#/definitions/CommandSigData">CommandSigData</a>
+                        </span>
+                      </span>
+                      <span class="json-property-range" title="Value limits"></span>
+                      <span class="json-property-required"></span>
+                    </dt>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-array-items">
+                        <span class="json-property-type">
+                          <span class="">
+                            <a class="json-schema-ref" href="#/definitions/CommandSigData">CommandSigData</a>
+                          </span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                        <div class="json-inner-schema"> </div>
+                      </section>
+                    </dt>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">"response"</span>: [
+    {
+      <span class="hljs-attr">"sigs"</span>: [
+        [
+          <span class="hljs-string">"ae18efd16cbd49e9a92552a2589ac01491b486fbcbb1e3f07980f945597e2033"</span>,
+          <span class="hljs-string">"a8b9ea0fbe6b8f59917908bbd2ec473af4ba30c62e2cbab9981f7f5f62941cbb79aee832efc38675fac42a658192ba7387bbbc61017b2ca9b2f2115bc1f4c503"</span>
+        ],
+        [
+          <span class="hljs-string">"fa781bdd858cd2380b5e2b654e58035f7189a6e8158686a1bb7eabb585a56e7f"</span>,
+          <span class="hljs-literal">null</span>
+        ]
+      ],
+      <span class="hljs-attr">"cmd"</span>: <span class="hljs-string">"{\"networkId\":\"testnet04\",\"payload\":{\"exec\":{\"data\":null,\"code\":\"(+ 1 2)\"}},\"signers\":[{\"pubKey\":\"ae18efd16cbd49e9a92552a2589ac01491b486fbcbb1e3f07980f945597e2033\",\"clist\":[{\"args\":[],\"name\":\"coin.GAS\"}]},{\"pubKey\":\"fa781bdd858cd2380b5e2b654e58035f7189a6e8158686a1bb7eabb585a56e7f\"}],\"meta\":{\"creationTime\":1663085494,\"ttl\":1800,\"gasLimit\":20,\"chainId\":\"0\",\"gasPrice\":1.0e-6,\"sender\":\"ae18efd16cbd49e9a92552a2589ac01491b486fbcbb1e3f07980f945597e2033\"},\"nonce\":\"2022-09-13 16:11:34.678231 UTC\"}"</span>
+    }
+  ]
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-CommandSigData" class="definition panel" data-traverse-target="definition-CommandSigData">
+            <h2 class="panel-title">
+              <a name="/definitions/CommandSigData"></a>CommandSigData: object
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>the signature data for a command</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="sigs">
+                      <span class="json-property-name">sigs:</span>
+                      <span class="json-property-type">object[]</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                      <span class="json-property-required"></span>
+                    </dt>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-array-items">
+                        <span class="json-property-type">object</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                        <div class="json-inner-schema"> </div>
+                      </section>
+                    </dt>
+                    <dt data-property-name="cmd">
+                      <span class="json-property-name">cmd:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                      <span class="json-property-required"></span>
+                    </dt>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">"sigs"</span>: [
+    [
+      <span class="hljs-string">"ae18efd16cbd49e9a92552a2589ac01491b486fbcbb1e3f07980f945597e2033"</span>,
+      <span class="hljs-string">"a8b9ea0fbe6b8f59917908bbd2ec473af4ba30c62e2cbab9981f7f5f62941cbb79aee832efc38675fac42a658192ba7387bbbc61017b2ca9b2f2115bc1f4c503"</span>
+    ],
+    [
+      <span class="hljs-string">"fa781bdd858cd2380b5e2b654e58035f7189a6e8158686a1bb7eabb585a56e7f"</span>,
+      <span class="hljs-literal">null</span>
+    ]
+  ],
+  <span class="hljs-attr">"cmd"</span>: <span class="hljs-string">"{\"networkId\":\"testnet04\",\"payload\":{\"exec\":{\"data\":null,\"code\":\"(+ 1 2)\"}},\"signers\":[{\"pubKey\":\"ae18efd16cbd49e9a92552a2589ac01491b486fbcbb1e3f07980f945597e2033\",\"clist\":[{\"args\":[],\"name\":\"coin.GAS\"}]},{\"pubKey\":\"fa781bdd858cd2380b5e2b654e58035f7189a6e8158686a1bb7eabb585a56e7f\"}],\"meta\":{\"creationTime\":1663085494,\"ttl\":1800,\"gasLimit\":20,\"chainId\":\"0\",\"gasPrice\":1.0e-6,\"sender\":\"ae18efd16cbd49e9a92552a2589ac01491b486fbcbb1e3f07980f945597e2033\"},\"nonce\":\"2022-09-13 16:11:34.678231 UTC\"}"</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-QuickSignRequest" class="definition panel" data-traverse-target="definition-QuickSignRequest">
+            <h2 class="panel-title">
+              <a name="/definitions/QuickSignRequest"></a>QuickSignRequest: object
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>completed transaction bytes to be signed</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="equest_commands">
+                      <span class="json-property-name">equest_commands:</span>
+                      <span class="json-property-type">
+                        <span class="json-schema-ref-array">
+                          <a class="json-schema-ref" href="#/definitions/CommandSigData">CommandSigData</a>
+                        </span>
+                      </span>
+                      <span class="json-property-range" title="Value limits"></span>
+                      <span class="json-property-required"></span>
+                    </dt>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-array-items">
+                        <span class="json-property-type">
+                          <span class="">
+                            <a class="json-schema-ref" href="#/definitions/CommandSigData">CommandSigData</a>
+                          </span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                        <div class="json-inner-schema"> </div>
+                      </section>
+                    </dt>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">"equest_commands"</span>: [
+    {
+      <span class="hljs-attr">"sigs"</span>: [
+        [
+          <span class="hljs-string">"ae18efd16cbd49e9a92552a2589ac01491b486fbcbb1e3f07980f945597e2033"</span>,
+          <span class="hljs-string">"a8b9ea0fbe6b8f59917908bbd2ec473af4ba30c62e2cbab9981f7f5f62941cbb79aee832efc38675fac42a658192ba7387bbbc61017b2ca9b2f2115bc1f4c503"</span>
+        ],
+        [
+          <span class="hljs-string">"fa781bdd858cd2380b5e2b654e58035f7189a6e8158686a1bb7eabb585a56e7f"</span>,
+          <span class="hljs-literal">null</span>
+        ]
+      ],
+      <span class="hljs-attr">"cmd"</span>: <span class="hljs-string">"{\"networkId\":\"testnet04\",\"payload\":{\"exec\":{\"data\":null,\"code\":\"(+ 1 2)\"}},\"signers\":[{\"pubKey\":\"ae18efd16cbd49e9a92552a2589ac01491b486fbcbb1e3f07980f945597e2033\",\"clist\":[{\"args\":[],\"name\":\"coin.GAS\"}]},{\"pubKey\":\"fa781bdd858cd2380b5e2b654e58035f7189a6e8158686a1bb7eabb585a56e7f\"}],\"meta\":{\"creationTime\":1663085494,\"ttl\":1800,\"gasLimit\":20,\"chainId\":\"0\",\"gasPrice\":1.0e-6,\"sender\":\"ae18efd16cbd49e9a92552a2589ac01491b486fbcbb1e3f07980f945597e2033\"},\"nonce\":\"2022-09-13 16:11:34.678231 UTC\"}"</span>
+    }
+  ]
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
                 </section>
               </div>
             </div>

@@ -46,6 +46,7 @@ module PactSwagger
   , ToSchema(..)
     -- | Debugging
   , debugSchema
+  , pactHashSchema
   ) where
 
 import GHC.Exts (fromList)
@@ -142,7 +143,6 @@ fixedLength i =
 
 toNiceString :: Int -> String -> String
 toNiceString i = unpack . T.toLower . T.drop i . pack
-
 
 optionConstructor :: (String -> String) -> SchemaOptions -> SchemaOptions
 optionConstructor f o = o { constructorTagModifier = f }

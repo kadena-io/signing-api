@@ -8,4 +8,6 @@
 
 nix-build -A kadena-signing-api-docs
 result/bin/gen-docs > swagger.json
-spectacle -t docs swagger.json
+
+# Get via `npm install spectacle-docs` 
+# spectacle -t docs swagger.json
