@@ -97,7 +97,7 @@ instance FromJSON QuickSignResponse where
 
 type SigningApi = "v1" :> V1SigningApi
 type V1SigningApi = "sign" :> ReqBody '[JSON] SigningRequest :> Post '[JSON] SigningResponse
-               :<|> "quickSign" :> ReqBody '[JSON] QuickSignRequest :> Post '[JSON] QuickSignResponse
+               :<|> "quicksign" :> ReqBody '[JSON] QuickSignRequest :> Post '[JSON] QuickSignResponse
 
 signingAPI :: Proxy SigningApi
 signingAPI = Proxy
