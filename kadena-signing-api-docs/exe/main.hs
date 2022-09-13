@@ -66,10 +66,8 @@ dummyCmdHashSL = (dummyCmd, dummyHash, dummySL)
 --          in HashSigData sl $ hash
 
 instance ToSchema QuickSignRequest where
-  declareNamedSchema _ =
-    swaggerDescription "completed transaction bytes to be signed" $
-      namedSchema "QuickSignRequest" $ sketchSchema $
-        QuickSignRequest [ dummyCommandSigData ]
+  declareNamedSchema =
+    (swaggerDescription "completed transaction bytes to be signed") . lensyDeclareNamedSchema 18
 
 instance ToSchema QuickSignResponse where
   declareNamedSchema _ =

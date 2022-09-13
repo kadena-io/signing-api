@@ -70,12 +70,12 @@ instance FromJSON SigningResponse where
   parseJSON = genericParseJSON compactEncoding
 
 newtype QuickSignRequest = QuickSignRequest
-  { _quickSignRequest_commands :: [CommandSigData]
+  { _quickSignRequest_reqs :: [CommandSigData]
   } deriving (Eq,Generic)
 
 instance ToJSON QuickSignRequest where
   toJSON a = object
-    [ "reqs" .= _quickSignRequest_commands a
+    [ "reqs" .= _quickSignRequest_reqs a
     ]
 
 instance FromJSON QuickSignRequest where
