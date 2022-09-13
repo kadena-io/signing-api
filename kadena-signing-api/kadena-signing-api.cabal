@@ -10,7 +10,6 @@ license-file:        LICENSE
 author:              Doug Beardsley
 maintainer:          doug@kadena.io
 copyright:           Kadena LLC
-extra-source-files:  CHANGELOG.md
 
 library
   exposed-modules:

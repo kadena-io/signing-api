@@ -9,6 +9,7 @@ import qualified Data.ByteString.Lazy as BSL
 import Data.Swagger
 import Data.Text (Text)
 import qualified Data.Text as T
+import Pact.Types.Command
 import Pact.Types.Util
 import Pact.Types.Command
 import PactSwagger
@@ -39,9 +40,12 @@ instance ToSchema DappCap where
 instance ToSchema CommandSigData where
   declareNamedSchema _ =
     swaggerDescription "the signature data for a command" $
-      namedSchema "CommandSigData" $ sketchSchema $
-        let (cmd, _, sl) = dummyCmdHashSL
-         in CommandSigData sl cmd
+      namedSchema "CommandSigData" $ sketchSchema $ dummyCommandSigData
+
+dummyCommandSigData :: CommandSigData
+dummyCommandSigData =
+  let (cmd, _, sl) = dummyCmdHashSL
+   in CommandSigData sl cmd
 
 dummyCmdHashSL :: (Text, Text, SignatureList)
 dummyCmdHashSL = (dummyCmd, dummyHash, dummySL)
@@ -62,12 +66,24 @@ dummyCmdHashSL = (dummyCmd, dummyHash, dummySL)
 --          in HashSigData sl $ hash
 
 instance ToSchema QuickSignRequest where
-  declareNamedSchema = (swaggerDescription "completed transaction bytes to be signed") .
-                       lensyDeclareNamedSchema 11
+  declareNamedSchema _ =
+    swaggerDescription "completed transaction bytes to be signed" $
+      namedSchema "QuickSignRequest" $ sketchSchema $
+        QuickSignRequest [ dummyCommandSigData ]
 
 instance ToSchema QuickSignResponse where
-  declareNamedSchema = (swaggerDescription "list of SigData") .
-                       lensyDeclareNamedSchema 11
+  declareNamedSchema _ =
+    swaggerDescription "list of SigData" $
+      namedSchema "QuickSignResponse" $ sketchSchema $
+        QuickSignResponse [ CommandSigData sigLst "<cmd here>" ]
+
+        where
+          sigLst =
+            SignatureList [("acbe76b30ccaf57e269a0cd5eeeb7293e7e84c7d68e6244a64c4adf4d2df6ea1",
+                             Just $ UserSig
+                                "e103338c324190c0e86f06e2fdcc886df42562c5d74a2216c8b2cc729d255686ec5488693569da6afc57a02af5e4ec5bd013c24b4fcddd94cc94eb412e88a20d"
+                            )
+                          ]
 
 instance ToSchema PublicKeyHex where
   declareNamedSchema = declareGenericString

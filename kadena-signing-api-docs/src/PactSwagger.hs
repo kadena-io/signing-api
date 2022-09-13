@@ -224,6 +224,9 @@ instance ToSchema Gas where
 instance ToSchema Hash where
   declareNamedSchema = (swaggerDescription "the hash of the pact execution's logs") .
     (declareGenericSchema pactHashSchema)
+instance ToSchema NestedPactExec where
+  declareNamedSchema = (swaggerDescription "output of a nested Continuation.") .
+    (lensyDeclareNamedSchema 4)
 instance ToSchema PactExec where
   declareNamedSchema = (swaggerDescription "output of a Continuation if one occurred in the command.") .
     (lensyDeclareNamedSchema 3)

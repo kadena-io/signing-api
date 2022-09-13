@@ -21,6 +21,7 @@ import qualified Data.Text.Encoding as T
 import qualified Data.Vector as V
 import GHC.Generics
 
+import Pact.Types.ChainMeta
 import Pact.Types.Command
 import Pact.Types.Hash
 import Pact.Parse
@@ -29,7 +30,7 @@ import Pact.Types.SigData
 
 newtype SignatureList =
   SignatureList { unSignatureList :: [(PublicKeyHex, Maybe UserSig)] }
-  deriving (Eq,Show, Semigroup, Monoid, Generic)
+  deriving (Eq, Ord, Show, Semigroup, Monoid, Generic)
 
 instance ToJSON SignatureList where
   toJSON (SignatureList rawLst) = Array $ V.fromList $
@@ -51,7 +52,7 @@ instance FromJSON SignatureList where
 data CommandSigData = CommandSigData
   { _csd_sigs :: SignatureList
   , _csd_cmd :: Text
-  } deriving (Eq,Show,Generic)
+  } deriving (Eq,Ord,Show,Generic)
 
 instance ToJSON CommandSigData where
   toJSON (CommandSigData s c) = object $
@@ -92,13 +93,16 @@ commandToCommandSigData c = do
       Right $ CommandSigData (SignatureList sigs) $ _cmdPayload c
 
 commandSigDataToCommand :: CommandSigData -> Either String (Command Text)
-commandSigDataToCommand (CommandSigData (SignatureList sigList) c) = do
-  payload :: Payload Value ParsedCode <- traverse parsePact =<< A.eitherDecodeStrict' (T.encodeUtf8 c)
+commandSigDataToCommand = fmap fst . commandSigDataToParsedCommand
+
+commandSigDataToParsedCommand :: CommandSigData -> Either String (Command Text, Payload PublicMeta ParsedCode)
+commandSigDataToParsedCommand (CommandSigData (SignatureList sigList) c) = do
+  payload :: Payload PublicMeta ParsedCode <- traverse parsePact =<< A.eitherDecodeStrict' (T.encodeUtf8 c)
   let sigMap = M.fromList sigList
   -- It is ok to use a map here because we're iterating over the signers list and only using the map for lookup.
       sigs = catMaybes $ map (\signer -> join $ M.lookup (PublicKeyHex $ _siPubKey signer) sigMap) $ _pSigners payload
       h = hash (T.encodeUtf8 c)
-  pure $ Command c sigs h
+  pure (Command c sigs h, payload)
 
 newtype AccountName = AccountName
   { unAccountName :: Text
