@@ -28,27 +28,35 @@ import Pact.Parse
 -- TODO: Rip out sig data dependency
 import Pact.Types.SigData
 
+data Signer = Signer
+  { _s_pubKey :: PublicKeyHex
+  , _s_userSig :: Maybe UserSig
+  } deriving (Eq, Ord, Show, Generic)
+
+instance ToJSON Signer where
+  toJSON (Signer (PublicKeyHex pkh) mSig) = object $
+    [ "publicKey" .= pkh
+    , "signature" .= mSig
+    ]
+
+instance FromJSON Signer where
+  parseJSON = withObject "Signer" $ \o -> do
+    pk <- fmap validatePkh $ o .: "publicKey"
+    sig <- fmap validateUserSig $ o .:? "signature"
+    pure $ Signer pk sig
+
+--------------------------------------------------------------------------------
 newtype SignatureList =
-  SignatureList { unSignatureList :: [(PublicKeyHex, Maybe UserSig)] }
+  SignatureList { unSignatureList :: [Signer] }
   deriving (Eq, Ord, Show, Semigroup, Monoid, Generic)
 
 instance ToJSON SignatureList where
-  toJSON (SignatureList rawLst) = Array $ V.fromList $
-    sigElemToJson <$> rawLst
-    where
-      sigElemToJson (PublicKeyHex k, mUS) = Array $ V.fromList
-        [String k
-        , maybe Null (String . _usSig) mUS
-        ]
+  toJSON = toJSONList . unSignatureList
 
 instance FromJSON SignatureList where
-  parseJSON = withArray "SignatureList"
-    $ fmap (SignatureList . V.toList) . V.mapM f
-    where
-      f = fmap g . parseJSON @(Text, Maybe Text)
-      -- Should we validate valid hex?
-      g = bimap PublicKeyHex (fmap UserSig)
+  parseJSON = fmap SignatureList . parseJSON
 
+--------------------------------------------------------------------------------
 data CommandSigData = CommandSigData
   { _csd_sigs :: SignatureList
   , _csd_cmd :: Text
@@ -56,33 +64,96 @@ data CommandSigData = CommandSigData
 
 instance ToJSON CommandSigData where
   toJSON (CommandSigData s c) = object $
-    [ "sigs" .= s
+    [ "signatureList" .= s
     , "cmd" .= c
     ]
 
 instance FromJSON CommandSigData where
   parseJSON = withObject "CommandSigData" $ \o -> do
-    s <- o .: "sigs"
+    s <- o .: "signatureList"
+    -- TODO should we validate the cmd here?
     c <- o .: "cmd"
     pure $ CommandSigData s c
 
-data HashSigData = HashSigData
-  { _hsd_sigs :: SignatureList
-  , _hsd_hash :: PactHash
-  } deriving (Eq,Show,Generic)
+--------------------------------------------------------------------------------
+data SigningOutcome =
+    SO_Success PactHash
+  | SO_Failure Text
+  | SO_NoSig
+  deriving (Eq,Ord,Show,Generic)
 
-instance ToJSON HashSigData where
-  toJSON (HashSigData s h) = object $
-    [ "sigs" .= s
-    , "hash" .= h
+instance ToJSON SigningOutcome where
+  toJSON a = case a of
+    SO_Success h -> object [ "result" .: ("success" :: Text), "hash" .: h ]
+    SO_Failure msg -> object [ "result" .: ("failure" :: Text), "msg" .: msg ]
+    SO_NoSig -> object [ "result" .: ("noSig" :: Text)]
+
+instance FromJSON SigningOutcome where
+  parseJSON = withObject "SigningOutcome" $ \o -> do
+    r <- o .: "result"
+    case t of
+      "success" -> do
+        h <- o .: "hash"
+        pure $ SO_Success h
+      "failure" -> do
+        m <- o .: "msg"
+        pure $ SO_Failure m
+      "noSig" -> pure SO_NoSig
+      otherwise -> fail "ill-formed SigningOutcome"
+
+data CSDResponse = CSDResponse
+  { _csdr_csd :: CommandSigData
+  , _csdr_outcome :: SigningOutcome
+  } deriving (Eq,Ord,Show,Generic)
+
+instance ToJSON CSDResponse where
+  toJSON (CSDResponse csd o) = object $
+    [ "commandSigData" .= csd
+    , "outcome" .= o
     ]
 
-instance FromJSON HashSigData where
-  parseJSON = withObject "HashSigData" $ \o -> do
-    s <- o .: "sigs"
-    h <- o .: "hash"
-    pure $ HashSigData s h
+data QSError =
+    QSE_Reject
+  | QSE_EmptyList
+  | QSE_Other Text
+  deriving (Eq,Ord,Show,Generic)
 
+instance ToJSON QSError where
+  toJSON a = case a of
+    QSE_Reject -> object [ "type", ("reject" :: Text)] --todo
+    QSE_EmptyList -> object [ "type" .: ("emptyList" :: Text)]
+    QSE_Other msg -> object [ "type" .: ("other" :: Text), "msg" .: msg]
+
+instance FromJSON QSError where
+  parseJSON = withObject "QSError" $ \o -> do
+    t <- o .: "type"
+    case t of
+      "reject" -> pure QSE_Reject
+      "emptyList" -> pure QSE_EmptyList
+      "other" -> do
+        msg <- o .: "msg"
+        pure $ QSE_Other msg
+      otherwise -> fail "ill-formed QSError"
+--------------------------------------------------------------------------------
+  --TODO:
+-- data HashSigData = HashSigData
+--   { _hsd_sigs :: SignatureList
+--   , _hsd_hash :: PactHash
+--   } deriving (Eq,Show,Generic)
+
+-- instance ToJSON HashSigData where
+--   toJSON (HashSigData s h) = object $
+--     [ "sigs" .= s
+--     , "hash" .= h
+--     ]
+
+-- instance FromJSON HashSigData where
+--   parseJSON = withObject "HashSigData" $ \o -> do
+--     s <- o .: "sigs"
+--     h <- o .: "hash"
+--     pure $ HashSigData s h
+
+--------------------------------------------------------------------------------
 commandToCommandSigData :: Command Text -> Either String CommandSigData
 commandToCommandSigData c = do
   let ep = traverse parsePact =<< (A.eitherDecodeStrict' $ T.encodeUtf8 $ _cmdPayload c)

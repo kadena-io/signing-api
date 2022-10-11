@@ -69,22 +69,25 @@ instance ToJSON SigningResponse where
 instance FromJSON SigningResponse where
   parseJSON = genericParseJSON compactEncoding
 
+--------------------------------------------------------------------------------
 newtype QuickSignRequest = QuickSignRequest
-  { _quickSignRequest_reqs :: [CommandSigData]
+  { _quickSignRequest_csds :: [CommandSigData]
   } deriving (Eq,Generic)
 
 instance ToJSON QuickSignRequest where
   toJSON a = object
-    [ "reqs" .= _quickSignRequest_reqs a
+    [ "commandSigDatas" .= _quickSignRequest_csds a
     ]
 
 instance FromJSON QuickSignRequest where
   parseJSON = withObject "QuickSignRequest" $ \o -> do
-    cmd <- o .: "reqs"
+    cmd <- o .: "commandSigDatas"
     pure $ QuickSignRequest cmd
 
+--------------------------------------------------------------------------------
 newtype QuickSignResponse =
-  QuickSignResponse { unQuickSignResponse :: [ CommandSigData ]}
+    QSR_Response [CSDResponse]
+  | QSR_Error QSError
   deriving (Eq,Generic)
 
 instance ToJSON QuickSignResponse where
@@ -94,6 +97,7 @@ instance FromJSON QuickSignResponse where
   parseJSON = withObject "QuickSignResponse" $ \o -> do
     results <- o .: "results"
     pure $ QuickSignResponse results
+--------------------------------------------------------------------------------
 
 type SigningApi = "v1" :> V1SigningApi
 type V1SigningApi = "sign" :> ReqBody '[JSON] SigningRequest :> Post '[JSON] SigningResponse
