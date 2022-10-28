@@ -6,6 +6,7 @@
 module Kadena.SigningApi where
 
 import Control.Lens hiding ((.=))
+import Control.Applicative((<|>))
 import Data.Aeson
 import Data.Proxy
 import Data.Text (Text)
@@ -15,7 +16,6 @@ import Pact.Types.Capability (SigCapability(..))
 import Pact.Types.ChainMeta (TTLSeconds(..))
 import Pact.Types.Runtime (GasLimit(..), ChainId, PublicKey)
 import Pact.Types.Command (Command)
-import Pact.Types.SigData
 import Servant.API
 
 import Kadena.SigningTypes
@@ -72,31 +72,30 @@ instance FromJSON SigningResponse where
 --------------------------------------------------------------------------------
 newtype QuickSignRequest = QuickSignRequest
   { _quickSignRequest_csds :: [CommandSigData]
-  } deriving (Eq,Generic)
+  } deriving (Eq)
 
 instance ToJSON QuickSignRequest where
-  toJSON a = object
-    [ "commandSigDatas" .= _quickSignRequest_csds a
-    ]
+  toJSON a = object ["commandSigDatas" .= _quickSignRequest_csds a]
 
 instance FromJSON QuickSignRequest where
   parseJSON = withObject "QuickSignRequest" $ \o -> do
     cmd <- o .: "commandSigDatas"
     pure $ QuickSignRequest cmd
 
---------------------------------------------------------------------------------
-newtype QuickSignResponse =
+data QuickSignResponse =
     QSR_Response [CSDResponse]
   | QSR_Error QSError
-  deriving (Eq,Generic)
+  deriving (Eq)
 
 instance ToJSON QuickSignResponse where
-  toJSON a = object [ "results" .= unQuickSignResponse a ]
+  toJSON a = case a of
+    QSR_Response responses -> object ["responses" .= responses]
+    QSR_Error e -> object ["error" .= e]
 
 instance FromJSON QuickSignResponse where
   parseJSON = withObject "QuickSignResponse" $ \o -> do
-    results <- o .: "results"
-    pure $ QuickSignResponse results
+    (fmap QSR_Response $ o .: "responses")
+    <|> (fmap QSR_Error $ o.: "error")
 --------------------------------------------------------------------------------
 
 type SigningApi = "v1" :> V1SigningApi

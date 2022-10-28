@@ -22,11 +22,11 @@ import qualified Data.Vector as V
 import GHC.Generics
 
 import Pact.Types.ChainMeta
-import Pact.Types.Command
+import Pact.Types.Command hiding (Signer)
 import Pact.Types.Hash
 import Pact.Parse
 -- TODO: Rip out sig data dependency
-import Pact.Types.SigData
+import Pact.Types.SigData (PublicKeyHex(..))
 
 data Signer = Signer
   { _s_pubKey :: PublicKeyHex
@@ -41,9 +41,16 @@ instance ToJSON Signer where
 
 instance FromJSON Signer where
   parseJSON = withObject "Signer" $ \o -> do
-    pk <- fmap validatePkh $ o .: "publicKey"
-    sig <- fmap validateUserSig $ o .:? "signature"
+    pk <- o .: "publicKey"
+    sig <- o .:? "signature"
+    -- pk <- fmap validatePkh $ o .: "publicKey"
+    -- sig <- fmap validateUserSig $ o .:? "signature"
     pure $ Signer pk sig
+    -- where
+    --   validateUserSig :: Text
+    --   validateUserSig = error "todo"
+    --   validatePkh :: PublicKeyHex
+    --   validatePkh = error "todo"
 
 --------------------------------------------------------------------------------
 newtype SignatureList =
@@ -84,33 +91,35 @@ data SigningOutcome =
 
 instance ToJSON SigningOutcome where
   toJSON a = case a of
-    SO_Success h -> object [ "result" .: ("success" :: Text), "hash" .: h ]
-    SO_Failure msg -> object [ "result" .: ("failure" :: Text), "msg" .: msg ]
-    SO_NoSig -> object [ "result" .: ("noSig" :: Text)]
+    SO_Success h -> object ["result" .= ("success" :: Text), "hash" .= h ]
+    SO_Failure msg -> object ["result" .= ("failure" :: Text), "msg" .= msg ]
+    SO_NoSig -> object ["result" .= ("noSig" :: Text)]
 
 instance FromJSON SigningOutcome where
   parseJSON = withObject "SigningOutcome" $ \o -> do
     r <- o .: "result"
-    case t of
-      "success" -> do
-        h <- o .: "hash"
-        pure $ SO_Success h
-      "failure" -> do
-        m <- o .: "msg"
-        pure $ SO_Failure m
+    case r::Text of
+      "success" -> SO_Success <$> o .: "hash"
+      "failure" -> SO_Failure <$> o .: "msg"
       "noSig" -> pure SO_NoSig
       otherwise -> fail "ill-formed SigningOutcome"
 
 data CSDResponse = CSDResponse
   { _csdr_csd :: CommandSigData
   , _csdr_outcome :: SigningOutcome
-  } deriving (Eq,Ord,Show,Generic)
+  } deriving (Eq,Ord,Show)
 
 instance ToJSON CSDResponse where
   toJSON (CSDResponse csd o) = object $
     [ "commandSigData" .= csd
     , "outcome" .= o
     ]
+
+instance FromJSON CSDResponse where
+  parseJSON = withObject "CSDResponse" $ \o -> do
+    CSDResponse
+      <$> o .: "commandSigData"
+      <*> o .: "outcome"
 
 data QSError =
     QSE_Reject
@@ -120,19 +129,19 @@ data QSError =
 
 instance ToJSON QSError where
   toJSON a = case a of
-    QSE_Reject -> object [ "type", ("reject" :: Text)] --todo
-    QSE_EmptyList -> object [ "type" .: ("emptyList" :: Text)]
-    QSE_Other msg -> object [ "type" .: ("other" :: Text), "msg" .: msg]
+    QSE_Reject -> object ["type" .= ("reject" :: Text)]
+    QSE_EmptyList -> object ["type" .= ("emptyList" :: Text)]
+    QSE_Other msg -> object ["type" .= ("other" :: Text)
+                            , "msg" .= msg
+                            ]
 
 instance FromJSON QSError where
   parseJSON = withObject "QSError" $ \o -> do
     t <- o .: "type"
-    case t of
+    case t::Text of
       "reject" -> pure QSE_Reject
       "emptyList" -> pure QSE_EmptyList
-      "other" -> do
-        msg <- o .: "msg"
-        pure $ QSE_Other msg
+      "other" -> fmap QSE_Other $ o .: "msg"
       otherwise -> fail "ill-formed QSError"
 --------------------------------------------------------------------------------
   --TODO:
@@ -160,8 +169,9 @@ commandToCommandSigData c = do
   case ep :: Either String (Payload Value ParsedCode) of
     Left e -> Left $ "Error decoding payload: " <> e
     Right p -> do
-      let sigs = map (\s -> (PublicKeyHex $ _siPubKey s, Nothing)) $ _pSigners p
-      Right $ CommandSigData (SignatureList sigs) $ _cmdPayload c
+      --TODO: This drops the sigs
+      let sigReqs = map (\s -> Signer (PublicKeyHex $ _siPubKey s) Nothing) $ _pSigners p
+      Right $ CommandSigData (SignatureList sigReqs) $ _cmdPayload c
 
 commandSigDataToCommand :: CommandSigData -> Either String (Command Text)
 commandSigDataToCommand = fmap fst . commandSigDataToParsedCommand
@@ -169,7 +179,7 @@ commandSigDataToCommand = fmap fst . commandSigDataToParsedCommand
 commandSigDataToParsedCommand :: CommandSigData -> Either String (Command Text, Payload PublicMeta ParsedCode)
 commandSigDataToParsedCommand (CommandSigData (SignatureList sigList) c) = do
   payload :: Payload PublicMeta ParsedCode <- traverse parsePact =<< A.eitherDecodeStrict' (T.encodeUtf8 c)
-  let sigMap = M.fromList sigList
+  let sigMap = M.fromList $ (\(Signer k v) -> (k, v)) <$> sigList
   -- It is ok to use a map here because we're iterating over the signers list and only using the map for lookup.
       sigs = catMaybes $ map (\signer -> join $ M.lookup (PublicKeyHex $ _siPubKey signer) sigMap) $ _pSigners payload
       h = hash (T.encodeUtf8 c)
