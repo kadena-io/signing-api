@@ -78,7 +78,7 @@ instance ToJSON CommandSigData where
 instance FromJSON CommandSigData where
   parseJSON = withObject "CommandSigData" $ \o -> do
     s <- o .: "signatureList"
-    -- TODO should we validate the cmd here?
+    -- TODO should we validate that this is actually a stringified payload here?
     c <- o .: "cmd"
     pure $ CommandSigData s c
 
@@ -143,36 +143,8 @@ instance FromJSON QSError where
       "emptyList" -> pure QSE_EmptyList
       "other" -> fmap QSE_Other $ o .: "msg"
       otherwise -> fail "ill-formed QSError"
---------------------------------------------------------------------------------
-  --TODO:
--- data HashSigData = HashSigData
---   { _hsd_sigs :: SignatureList
---   , _hsd_hash :: PactHash
---   } deriving (Eq,Show,Generic)
-
--- instance ToJSON HashSigData where
---   toJSON (HashSigData s h) = object $
---     [ "sigs" .= s
---     , "hash" .= h
---     ]
-
--- instance FromJSON HashSigData where
---   parseJSON = withObject "HashSigData" $ \o -> do
---     s <- o .: "sigs"
---     h <- o .: "hash"
---     pure $ HashSigData s h
 
 --------------------------------------------------------------------------------
-commandToCommandSigData :: Command Text -> Either String CommandSigData
-commandToCommandSigData c = do
-  let ep = traverse parsePact =<< (A.eitherDecodeStrict' $ T.encodeUtf8 $ _cmdPayload c)
-  case ep :: Either String (Payload Value ParsedCode) of
-    Left e -> Left $ "Error decoding payload: " <> e
-    Right p -> do
-      --TODO: This drops the sigs
-      let sigReqs = map (\s -> Signer (PublicKeyHex $ _siPubKey s) Nothing) $ _pSigners p
-      Right $ CommandSigData (SignatureList sigReqs) $ _cmdPayload c
-
 commandSigDataToCommand :: CommandSigData -> Either String (Command Text)
 commandSigDataToCommand = fmap fst . commandSigDataToParsedCommand
 
@@ -185,6 +157,7 @@ commandSigDataToParsedCommand (CommandSigData (SignatureList sigList) c) = do
       h = hash (T.encodeUtf8 c)
   pure (Command c sigs h, payload)
 
+--------------------------------------------------------------------------------
 newtype AccountName = AccountName
   { unAccountName :: Text
   } deriving (Eq, Ord, Show, Generic, ToJSON, FromJSON, ToJSONKey, FromJSONKey)
