@@ -40,17 +40,11 @@ instance ToJSON Signer where
     ]
 
 instance FromJSON Signer where
-  parseJSON = withObject "Signer" $ \o -> do
-    pk <- o .: "publicKey"
-    sig <- o .:? "signature"
-    -- pk <- fmap validatePkh $ o .: "publicKey"
-    -- sig <- fmap validateUserSig $ o .:? "signature"
-    pure $ Signer pk sig
-    -- where
-    --   validateUserSig :: Text
-    --   validateUserSig = error "todo"
-    --   validatePkh :: PublicKeyHex
-    --   validatePkh = error "todo"
+  parseJSON = withObject "Signer" $ \o ->
+    Signer
+    <$> o .: "publicKey"
+    -- TODO:Should we check that this is a valid UserSig string (128chars/hex)?
+    <*> o .:? "signature"
 
 --------------------------------------------------------------------------------
 newtype SignatureList =
