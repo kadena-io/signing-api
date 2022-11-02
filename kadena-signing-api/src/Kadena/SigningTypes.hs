@@ -22,33 +22,34 @@ import qualified Data.Vector as V
 import GHC.Generics
 
 import Pact.Types.ChainMeta
-import Pact.Types.Command hiding (Signer)
+import Pact.Types.Command
 import Pact.Types.Hash
 import Pact.Parse
 -- TODO: Rip out sig data dependency
 import Pact.Types.SigData (PublicKeyHex(..))
 
-data Signer = Signer
+-- The spec calls this `Signer` but it clashes too much with Pact`s `Signer` type
+data CSDSigner = CSDSigner
   { _s_pubKey :: PublicKeyHex
   , _s_userSig :: Maybe UserSig
   } deriving (Eq, Ord, Show, Generic)
 
-instance ToJSON Signer where
-  toJSON (Signer (PublicKeyHex pkh) mSig) = object $
+instance ToJSON CSDSigner where
+  toJSON (CSDSigner (PublicKeyHex pkh) mSig) = object $
     [ "publicKey" .= pkh
     , "signature" .= mSig
     ]
 
-instance FromJSON Signer where
+instance FromJSON CSDSigner where
   parseJSON = withObject "Signer" $ \o ->
-    Signer
+    CSDSigner
     <$> o .: "publicKey"
     -- TODO:Should we check that this is a valid UserSig string (128chars/hex)?
     <*> o .:? "signature"
 
 --------------------------------------------------------------------------------
 newtype SignatureList =
-  SignatureList { unSignatureList :: [Signer] }
+  SignatureList { unSignatureList :: [CSDSigner] }
   deriving (Eq, Ord, Show, Semigroup, Monoid, Generic)
 
 instance ToJSON SignatureList where
@@ -101,7 +102,7 @@ instance FromJSON SigningOutcome where
 data CSDResponse = CSDResponse
   { _csdr_csd :: CommandSigData
   , _csdr_outcome :: SigningOutcome
-  } deriving (Eq,Ord,Show)
+  } deriving (Eq,Ord,Show, Generic)
 
 instance ToJSON CSDResponse where
   toJSON (CSDResponse csd o) = object $
@@ -145,7 +146,7 @@ commandSigDataToCommand = fmap fst . commandSigDataToParsedCommand
 commandSigDataToParsedCommand :: CommandSigData -> Either String (Command Text, Payload PublicMeta ParsedCode)
 commandSigDataToParsedCommand (CommandSigData (SignatureList sigList) c) = do
   payload :: Payload PublicMeta ParsedCode <- traverse parsePact =<< A.eitherDecodeStrict' (T.encodeUtf8 c)
-  let sigMap = M.fromList $ (\(Signer k v) -> (k, v)) <$> sigList
+  let sigMap = M.fromList $ (\(CSDSigner k v) -> (k, v)) <$> sigList
   -- It is ok to use a map here because we're iterating over the signers list and only using the map for lookup.
       sigs = catMaybes $ map (\signer -> join $ M.lookup (PublicKeyHex $ _siPubKey signer) sigMap) $ _pSigners payload
       h = hash (T.encodeUtf8 c)
