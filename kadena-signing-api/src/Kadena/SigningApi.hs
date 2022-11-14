@@ -84,7 +84,7 @@ instance FromJSON QuickSignRequest where
 
 data QuickSignResponse =
     QSR_Response [CSDResponse]
-  | QSR_Error QSError
+  | QSR_Error QuicksignError
   deriving (Eq, Generic)
 
 instance ToJSON QuickSignResponse where

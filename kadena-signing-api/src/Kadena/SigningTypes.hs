@@ -116,28 +116,28 @@ instance FromJSON CSDResponse where
       <$> o .: "commandSigData"
       <*> o .: "outcome"
 
-data QSError =
-    QSE_Reject
-  | QSE_EmptyList
-  | QSE_Other Text
+data QuicksignError =
+    QuicksignError_Reject
+  | QuicksignError_EmptyList
+  | QuicksignError_Other Text
   deriving (Eq,Ord,Show,Generic)
 
-instance ToJSON QSError where
+instance ToJSON QuicksignError where
   toJSON a = case a of
-    QSE_Reject -> object ["type" .= ("reject" :: Text)]
-    QSE_EmptyList -> object ["type" .= ("emptyList" :: Text)]
-    QSE_Other msg -> object ["type" .= ("other" :: Text)
+    QuicksignError_Reject -> object ["type" .= ("reject" :: Text)]
+    QuicksignError_EmptyList -> object ["type" .= ("emptyList" :: Text)]
+    QuicksignError_Other msg -> object ["type" .= ("other" :: Text)
                             , "msg" .= msg
                             ]
 
-instance FromJSON QSError where
-  parseJSON = withObject "QSError" $ \o -> do
+instance FromJSON QuicksignError where
+  parseJSON = withObject "QuicksignError" $ \o -> do
     t <- o .: "type"
     case t::Text of
-      "reject" -> pure QSE_Reject
-      "emptyList" -> pure QSE_EmptyList
-      "other" -> fmap QSE_Other $ o .: "msg"
-      otherwise -> fail "ill-formed QSError"
+      "reject" -> pure QuicksignError_Reject
+      "emptyList" -> pure QuicksignError_EmptyList
+      "other" -> fmap QuicksignError_Other $ o .: "msg"
+      otherwise -> fail "ill-formed QuicksignError"
 
 --------------------------------------------------------------------------------
 commandSigDataToCommand :: CommandSigData -> Either String (Command Text)
