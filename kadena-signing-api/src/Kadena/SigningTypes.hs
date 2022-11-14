@@ -36,16 +36,16 @@ data CSDSigner = CSDSigner
 
 instance ToJSON CSDSigner where
   toJSON (CSDSigner (PublicKeyHex pkh) mSig) = object $
-    [ "publicKey" .= pkh
-    , "signature" .= mSig
+    [ "pubKey" .= pkh
+    , "sig" .= mSig
     ]
 
 instance FromJSON CSDSigner where
   parseJSON = withObject "Signer" $ \o ->
     CSDSigner
-    <$> o .: "publicKey"
+    <$> o .: "pubKey"
     -- TODO:Should we check that this is a valid UserSig string (128chars/hex)?
-    <*> o .:? "signature"
+    <*> o .:? "sig"
 
 --------------------------------------------------------------------------------
 newtype SignatureList =
@@ -66,13 +66,13 @@ data CommandSigData = CommandSigData
 
 instance ToJSON CommandSigData where
   toJSON (CommandSigData s c) = object $
-    [ "signatureList" .= s
+    [ "sigs" .= s
     , "cmd" .= c
     ]
 
 instance FromJSON CommandSigData where
   parseJSON = withObject "CommandSigData" $ \o -> do
-    s <- o .: "signatureList"
+    s <- o .: "sigs"
     -- TODO should we validate that this is actually a stringified payload here?
     c <- o .: "cmd"
     pure $ CommandSigData s c

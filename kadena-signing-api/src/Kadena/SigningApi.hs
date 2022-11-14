@@ -75,11 +75,11 @@ newtype QuickSignRequest = QuickSignRequest
   } deriving (Eq, Generic)
 
 instance ToJSON QuickSignRequest where
-  toJSON a = object ["commandSigDatas" .= _quickSignRequest_csds a]
+  toJSON a = object ["cmds" .= _quickSignRequest_csds a]
 
 instance FromJSON QuickSignRequest where
   parseJSON = withObject "QuickSignRequest" $ \o -> do
-    cmd <- o .: "commandSigDatas"
+    cmd <- o .: "cmds"
     pure $ QuickSignRequest cmd
 
 data QuickSignResponse =
