@@ -37,15 +37,14 @@ data CSDSigner = CSDSigner
 instance ToJSON CSDSigner where
   toJSON (CSDSigner (PublicKeyHex pkh) mSig) = object $
     [ "pubKey" .= pkh
-    , "sig" .= mSig
+    , "sig" .= (_usSig <$> mSig)
     ]
 
 instance FromJSON CSDSigner where
-  parseJSON = withObject "Signer" $ \o ->
-    CSDSigner
-    <$> o .: "pubKey"
-    -- TODO:Should we check that this is a valid UserSig string (128chars/hex)?
-    <*> o .:? "sig"
+  parseJSON = withObject "Signer" $ \o -> do
+    pk <- o .: "pubKey"
+    mSig ::(Maybe Text) <- o.:? "sig"
+    pure $ CSDSigner pk $ UserSig <$> mSig
 
 --------------------------------------------------------------------------------
 newtype SignatureList =
