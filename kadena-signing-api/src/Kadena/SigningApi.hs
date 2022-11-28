@@ -72,7 +72,7 @@ instance FromJSON SigningResponse where
 --------------------------------------------------------------------------------
 newtype QuickSignRequest = QuickSignRequest
   { _quickSignRequest_csds :: [CommandSigData]
-  } deriving (Eq, Generic)
+  } deriving (Show, Eq, Generic)
 
 instance ToJSON QuickSignRequest where
   toJSON a = object ["cmdSigDatas" .= _quickSignRequest_csds a]
@@ -85,7 +85,7 @@ instance FromJSON QuickSignRequest where
 data QuickSignResponse =
     QSR_Response [CSDResponse]
   | QSR_Error QuicksignError
-  deriving (Eq, Generic)
+  deriving (Show, Eq, Generic)
 
 instance ToJSON QuickSignResponse where
   toJSON a = case a of
