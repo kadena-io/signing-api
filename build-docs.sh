@@ -7,5 +7,7 @@
 # https://sourcey.com/spectacle
 
 nix-build -A kadena-signing-api-docs
+
+# Get via `npm install spectacle-docs`
+# spectacle -t docs swagger.json
 result/bin/gen-docs > swagger.json
-spectacle -t docs swagger.json
