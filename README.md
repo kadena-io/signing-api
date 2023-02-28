@@ -24,7 +24,7 @@ will handle all the details of transaction signing for you.
 
 ## API Documentation
 
-The [swagger.json](swagger.json) file contains the generated swagger
+The [swagger.yaml](swagger.yaml) file contains the generated swagger
 representation of the API. You can use tools like
 [swagger-codegen](https://github.com/swagger-api/swagger-codegen) to generate
 client or server code in a large number of different languages.
