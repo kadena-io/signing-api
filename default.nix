@@ -1,4 +1,14 @@
-{ kpkgs ? import ./dep/kpkgs {}}:
+{ kpkgs ? import ./dep/kpkgs {}
+, rev ? "22.11"
+, sha256 ? "11w3wn2yjhaa5pv20gbfbirvjq6i3m7pqrq2msf0g7cv44vijwgw"
+, pkgs ? import (builtins.fetchTarball {
+      url    = "https://github.com/NixOS/nixpkgs/archive/${rev}.tar.gz";
+      inherit sha256;
+  }) {
+    config.allowBroken = false;
+    config.allowUnfree = true;
+  }
+}:
 let
   nix-thunk-src = (kpkgs.pkgs.fetchFromGitHub {
     owner = "obsidiansystems";
@@ -41,9 +51,14 @@ let
       ghc = ["kadena-signing-api" "kadena-signing-api-docs"];
     };
   });
+  inherit (signingProject.ghc) kadena-signing-api kadena-signing-api-docs;
+  yq = pkgs.yq-go;
 in
   {
-    inherit signingProject;
-    kadena-signing-api = signingProject.ghc.kadena-signing-api;
-    kadena-signing-api-docs = signingProject.ghc.kadena-signing-api-docs;
+    inherit
+      signingProject
+      kadena-signing-api
+      kadena-signing-api-docs
+      yq
+    ;
   }
