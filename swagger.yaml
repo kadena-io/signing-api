@@ -101,8 +101,8 @@ components:
     SigningRequest:
       description: transaction information sent to the wallet for signing
       required:
-      - caps
       - code
+      - caps
       properties:
         code:
           type: string
@@ -214,14 +214,14 @@ components:
     CommandSigData:
       description: the signature data for a command
       required:
-      - cmd
       - sigs
+      - cmd
       properties:
         sigs:
           items:
             items:
-              nullable: true
               type: string
+              nullable: true
             type: array
           type: array
         cmd:
