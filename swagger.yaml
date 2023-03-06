@@ -152,9 +152,9 @@ components:
       - name
       properties:
         args:
-          type: array
           items:
             type: string
+          type: array
         name:
           type: string
       example:
@@ -182,21 +182,21 @@ components:
       - results
       properties:
         results:
-          type: array
           items:
             required:
             - cmd
             - sigs
-            type: object
             properties:
               sigs:
-                type: array
                 items:
-                  type: array
                   items:
                     type: string
+                  type: array
+                type: array
               cmd:
                 type: string
+            type: object
+          type: array
       example:
         results:
         - sigs:
