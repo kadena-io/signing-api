@@ -27,11 +27,11 @@ paths:
           description: Invalid `body`
           content: {}
         "200":
-          description: ""
           content:
             application/json;charset=utf-8:
               schema:
                 $ref: '#/components/schemas/SigningResponse'
+          description: ""
       x-codegen-request-body-name: body
   /v1/quicksign:
     post:
@@ -46,11 +46,11 @@ paths:
           description: Invalid `body`
           content: {}
         "200":
-          description: ""
           content:
             application/json;charset=utf-8:
               schema:
                 $ref: '#/components/schemas/QuickSignResponse'
+          description: ""
       x-codegen-request-body-name: body
 components:
   schemas:
