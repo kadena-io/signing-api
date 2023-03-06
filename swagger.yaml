@@ -109,9 +109,9 @@ components:
         data:
           $ref: '#/components/schemas/Object'
         caps:
-          type: array
           items:
             $ref: '#/components/schemas/DappCap'
+          type: array
         nonce:
           type: string
         chainId:
@@ -131,8 +131,7 @@ components:
       description: Arbitrary JSON object.
       type: object
     DappCap:
-      description: a capability required by the transaction with amplifying information
-        to help the user
+      description: a capability required by the transaction with amplifying information to help the user
       required:
       - role
       - description
@@ -167,12 +166,10 @@ components:
       description: max number of gas units you want to spend on this transaction
       type: number
     TTLSeconds:
-      description: number of seconds the transaction can wait in the mempool before
-        expiring
+      description: number of seconds the transaction can wait in the mempool before expiring
       type: number
     AccountName:
-      description: The name of an account in the coin contract. In the SigningRequest
-        sender field, this will be the account used to pay the transaction's gas price.
+      description: The name of an account in the coin contract. In the SigningRequest sender field, this will be the account used to pay the transaction's gas price.
       type: string
     PublicKey:
       type: string
@@ -235,7 +232,5 @@ components:
           - a8b9ea0fbe6b8f59917908bbd2ec473af4ba30c62e2cbab9981f7f5f62941cbb79aee832efc38675fac42a658192ba7387bbbc61017b2ca9b2f2115bc1f4c503
         - - fa781bdd858cd2380b5e2b654e58035f7189a6e8158686a1bb7eabb585a56e7f
           - null
-        cmd: '{"networkId":"testnet04","payload":{"exec":{"data":null,"code":"(+ 1
-          2)"}},"signers":[{"pubKey":"ae18efd16cbd49e9a92552a2589ac01491b486fbcbb1e3f07980f945597e2033","clist":[{"args":[],"name":"coin.GAS"}]},{"pubKey":"fa781bdd858cd2380b5e2b654e58035f7189a6e8158686a1bb7eabb585a56e7f"}],"meta":{"creationTime":1663085494,"ttl":1800,"gasLimit":20,"chainId":"0","gasPrice":1.0e-6,"sender":"ae18efd16cbd49e9a92552a2589ac01491b486fbcbb1e3f07980f945597e2033"},"nonce":"2022-09-13
-          16:11:34.678231 UTC"}'
+        cmd: '{"networkId":"testnet04","payload":{"exec":{"data":null,"code":"(+ 1 2)"}},"signers":[{"pubKey":"ae18efd16cbd49e9a92552a2589ac01491b486fbcbb1e3f07980f945597e2033","clist":[{"args":[],"name":"coin.GAS"}]},{"pubKey":"fa781bdd858cd2380b5e2b654e58035f7189a6e8158686a1bb7eabb585a56e7f"}],"meta":{"creationTime":1663085494,"ttl":1800,"gasLimit":20,"chainId":"0","gasPrice":1.0e-6,"sender":"ae18efd16cbd49e9a92552a2589ac01491b486fbcbb1e3f07980f945597e2033"},"nonce":"2022-09-13 16:11:34.678231 UTC"}'
       type: object
