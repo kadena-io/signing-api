@@ -58,19 +58,18 @@ components:
       required:
       - body
       - chainId
-      type: object
       properties:
         body:
           $ref: '#/components/schemas/Command'
         chainId:
           $ref: '#/components/schemas/ChainId'
       description: wallet response that includes the signed transaction
+      type: object
     Command:
       required:
       - cmd
       - hash
       - sigs
-      type: object
       properties:
         cmd:
           type: string
@@ -81,20 +80,21 @@ components:
         hash:
           $ref: '#/components/schemas/TypedHash'
       description: transaction command with stringified JSON payload (cmd)
+      type: object
     UserSig:
       required:
       - sig
-      type: object
       properties:
         sig:
           type: string
       description: crypto signature by secret key of command payload
+      type: object
     TypedHash:
+      description: blake2 hash in base64 of command payload
       maxLength: 32
+      format: base64url
       minLength: 32
       type: string
-      description: blake2 hash in base64 of command payload
-      format: base64url
     ChainId:
       type: string
       description: chainweb chain ID where the transaction will be executed
