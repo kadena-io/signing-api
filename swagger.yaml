@@ -23,10 +23,10 @@ paths:
               $ref: '#/components/schemas/SigningRequest'
         required: true
       responses:
-        400:
+        "400":
           description: Invalid `body`
           content: {}
-        200:
+        "200":
           description: ""
           content:
             application/json;charset=utf-8:
@@ -42,10 +42,10 @@ paths:
               $ref: '#/components/schemas/QuickSignRequest'
         required: true
       responses:
-        400:
+        "400":
           description: Invalid `body`
           content: {}
-        200:
+        "200":
           description: ""
           content:
             application/json;charset=utf-8:
