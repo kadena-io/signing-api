@@ -184,8 +184,9 @@ components:
         results:
           items:
             required:
-            - cmd
             - sigs
+            - cmd
+            type: object
             properties:
               sigs:
                 items:
@@ -195,7 +196,6 @@ components:
                 type: array
               cmd:
                 type: string
-            type: object
           type: array
       example:
         results:
@@ -210,9 +210,9 @@ components:
       - reqs
       properties:
         reqs:
-          type: array
           items:
             $ref: '#/components/schemas/CommandSigData'
+          type: array
       type: object
     CommandSigData:
       description: the signature data for a command
