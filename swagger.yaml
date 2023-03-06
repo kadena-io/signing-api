@@ -23,15 +23,15 @@ paths:
               $ref: '#/components/schemas/SigningRequest'
         required: true
       responses:
+        400:
+          description: Invalid `body`
+          content: {}
         200:
           description: ""
           content:
             application/json;charset=utf-8:
               schema:
                 $ref: '#/components/schemas/SigningResponse'
-        400:
-          description: Invalid `body`
-          content: {}
       x-codegen-request-body-name: body
   /v1/quicksign:
     post:
@@ -42,15 +42,15 @@ paths:
               $ref: '#/components/schemas/QuickSignRequest'
         required: true
       responses:
+        400:
+          description: Invalid `body`
+          content: {}
         200:
           description: ""
           content:
             application/json;charset=utf-8:
               schema:
                 $ref: '#/components/schemas/QuickSignResponse'
-        400:
-          description: Invalid `body`
-          content: {}
       x-codegen-request-body-name: body
 components:
   schemas:
