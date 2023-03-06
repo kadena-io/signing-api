@@ -55,6 +55,7 @@ paths:
 components:
   schemas:
     SigningResponse:
+      description: wallet response that includes the signed transaction
       required:
       - body
       - chainId
@@ -63,31 +64,30 @@ components:
           $ref: '#/components/schemas/Command'
         chainId:
           $ref: '#/components/schemas/ChainId'
-      description: wallet response that includes the signed transaction
       type: object
     Command:
+      description: transaction command with stringified JSON payload (cmd)
       required:
       - cmd
-      - hash
       - sigs
+      - hash
       properties:
         cmd:
           type: string
         sigs:
-          type: array
           items:
             $ref: '#/components/schemas/UserSig'
+          type: array
         hash:
           $ref: '#/components/schemas/TypedHash'
-      description: transaction command with stringified JSON payload (cmd)
       type: object
     UserSig:
+      description: crypto signature by secret key of command payload
       required:
       - sig
       properties:
         sig:
           type: string
-      description: crypto signature by secret key of command payload
       type: object
     TypedHash:
       description: blake2 hash in base64 of command payload
@@ -96,13 +96,13 @@ components:
       minLength: 32
       type: string
     ChainId:
-      type: string
       description: chainweb chain ID where the transaction will be executed
+      type: string
     SigningRequest:
+      description: transaction information sent to the wallet for signing
       required:
       - caps
       - code
-      type: object
       properties:
         code:
           type: string
@@ -123,19 +123,20 @@ components:
         sender:
           $ref: '#/components/schemas/AccountName'
         extraSigners:
-          type: array
           items:
             $ref: '#/components/schemas/PublicKey'
-      description: transaction information sent to the wallet for signing
-    Object:
+          type: array
       type: object
+    Object:
       description: Arbitrary JSON object.
+      type: object
     DappCap:
+      description: a capability required by the transaction with amplifying information
+        to help the user
       required:
       - cap
       - description
       - role
-      type: object
       properties:
         role:
           type: string
@@ -143,8 +144,7 @@ components:
           type: string
         cap:
           $ref: '#/components/schemas/SigCapability'
-      description: a capability required by the transaction with amplifying information
-        to help the user
+      type: object
     SigCapability:
       required:
       - args
