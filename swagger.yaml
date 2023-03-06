@@ -218,13 +218,10 @@ definitions:
     properties:
       sigs:
         items:
-          - items:
-              type: string
-            type: array
-          - items:
-              - type: string
-              - type: "null"
-            type: array
+          items:
+            type: string
+            x-nullable: true
+          type: array
         type: array
       cmd:
         type: string
