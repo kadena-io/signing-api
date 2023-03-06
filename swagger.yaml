@@ -1,16 +1,16 @@
 openapi: 3.0.1
 info:
+  contact:
+    email: info@kadena.io
+    url: https://kadena.io
+    name: Kadena LLC
+  version: "1.0"
   title: Kadena Wallet Signing API
+  license:
+    name: BSD3
   description: |
     This API facilitates communication between dapps and wallets. This frees dapp developers from the complexity of managing private keys, allowing them to focus on the functionality and business logic of the application.
     Whenever the dapp needs to send a signed transaction, all you have to do is make an AJAX request to this API on localhost port 9467 and the user's wallet app will handle all the details of transaction signing for you.
-  contact:
-    name: Kadena LLC
-    url: https://kadena.io
-    email: info@kadena.io
-  license:
-    name: BSD3
-  version: "1.0"
 servers:
 - url: //localhost:9467/
 paths:
