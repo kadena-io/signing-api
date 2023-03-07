@@ -38,7 +38,6 @@ let
 
     packages = {
       kadena-signing-api = kpkgs.gitignoreSource ./kadena-signing-api;
-      kadena-signing-api-docs = kpkgs.gitignoreSource ./kadena-signing-api-docs;
     };
 
     shellToolOverrides = ghc: super: {
@@ -48,18 +47,17 @@ let
     };
 
     shells = {
-      ghc = ["kadena-signing-api" "kadena-signing-api-docs"];
+      ghc = ["kadena-signing-api"];
     };
   });
   tools = import ./tools { inherit pkgs; };
-  inherit (signingProject.ghc) kadena-signing-api kadena-signing-api-docs;
+  inherit (signingProject.ghc) kadena-signing-api;
   yq = pkgs.yq-go;
 in
   {
     inherit
       signingProject
       kadena-signing-api
-      kadena-signing-api-docs
       yq
     ;
     swagger-cli = tools."@apidevtools/swagger-cli";
