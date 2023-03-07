@@ -51,6 +51,7 @@ let
       ghc = ["kadena-signing-api" "kadena-signing-api-docs"];
     };
   });
+  tools = import ./tools { inherit pkgs; };
   inherit (signingProject.ghc) kadena-signing-api kadena-signing-api-docs;
   yq = pkgs.yq-go;
 in
@@ -61,4 +62,5 @@ in
       kadena-signing-api-docs
       yq
     ;
+    swagger-cli = tools."@apidevtools/swagger-cli";
   }

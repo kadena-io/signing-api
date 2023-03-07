@@ -1,0 +1,21 @@
+name: Swagger Validator
+
+on:
+  push:
+
+jobs:
+  swagger-validator:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v13
+
+      - name: Build with Nix
+        run: nix-build -A swagger-cli
+
+      - name: Validate Swagger file
+        run: ./result/bin/swagger-cli validate swagger.yaml
