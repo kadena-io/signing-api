@@ -34,14 +34,16 @@ rec {
   runSchemaTests = pkgs.writeScript "run-schema-tests" ''
     #! ${pkgs.runtimeShell}
     set -xeuo pipefail
+
     ${runMockApi} &
     MOCK_API_PID=$!
-    sleep 3
     function cleanup {
         echo "Stopping server..."
         kill $MOCK_API_PID
     }
     trap cleanup EXIT
+
+    sleep 3
 
     ${runSchemathesis}
   '';
