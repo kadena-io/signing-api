@@ -68,5 +68,5 @@ in
       tools
       yq
     ;
-    swagger-cli = tools.swagger-cli;
+    inherit (tools) swagger-cli schemathesis;
   }

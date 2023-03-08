@@ -1,0 +1,4 @@
+schemathesis
+
+# I needed the following to avoid dependency version errors
+attrs < 22.2
