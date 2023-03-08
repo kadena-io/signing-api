@@ -65,7 +65,8 @@ in
       signingProject
       kadena-signing-api
       kadena-signing-api-mock
+      tools
       yq
     ;
-    swagger-cli = tools."@apidevtools/swagger-cli";
+    swagger-cli = tools.swagger-cli;
   }
