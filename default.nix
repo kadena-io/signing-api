@@ -59,6 +59,11 @@ let
   tools = import ./tools { inherit pkgs; };
   inherit (signingProject.ghc) kadena-signing-api kadena-signing-api-mock;
   yq = pkgs.yq-go;
+  schema-tests = import ./schema-tests.nix {
+    inherit pkgs;
+    inherit (tools) schemathesis;
+    inherit kadena-signing-api-mock;
+  };
 in
   {
     inherit
@@ -67,6 +72,7 @@ in
       kadena-signing-api-mock
       tools
       yq
+      schema-tests
     ;
     inherit (tools) swagger-cli schemathesis;
   }
