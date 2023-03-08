@@ -53,7 +53,7 @@ let
     };
 
     shells = {
-      ghc = ["kadena-signing-api"];
+      ghc = ["kadena-signing-api" "kadena-signing-api-mock"];
     };
   });
   tools = import ./tools { inherit pkgs; };
