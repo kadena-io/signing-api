@@ -4,7 +4,7 @@ on:
   push:
 
 jobs:
-  swagger-validator:
+  schema-tests:
     runs-on: ubuntu-latest
 
     steps:
@@ -28,5 +28,5 @@ jobs:
               ryantrinkle.com-1:JJiAKaRv9mWgpVAz8dwewnZe0AzzEAzPkagE9SP5NWI=
               '
 
-      - name: Validate Swagger file
+      - name: Run the schema tests
         run: ./result
