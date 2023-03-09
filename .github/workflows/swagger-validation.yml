@@ -20,12 +20,10 @@ jobs:
             --option substituters '
               https://nixcache.chainweb.com
               https://cache.nixos.org/
-              https://nixcache.reflex-frp.org
               ' \
             --option trusted-public-keys '
               nixcache.chainweb.com:FVN503ABX9F8x8K0ptnc99XEz5SaA4Sks6kNcZn2pBY=
               cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
-              ryantrinkle.com-1:JJiAKaRv9mWgpVAz8dwewnZe0AzzEAzPkagE9SP5NWI=
               '
 
       - name: Validate Swagger file
