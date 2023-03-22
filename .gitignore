@@ -23,3 +23,7 @@ cabal.project.local~
 result*
 node_modules
 package-lock.json
+
+# Schemathesis
+.hypothesis
+__pycache__

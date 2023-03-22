@@ -34,11 +34,16 @@ let
         ver = "2.3.26";
         sha256 = "1kdkisj534nv5r0m3gmxy2iqgsn6y1dd881x77a87ynkx1glxfva";
       } {});
+      generic-arbitrary = dontCheck (self.callHackageDirect {
+        pkg = "generic-arbitrary";
+        ver = "1.0.1";
+        sha256 = "sha256-gET1SkgjtU+7uvCaZ7NNpDdQX7n5rzze243Y/LH2F7M=";
+      } {});
     };
 
     packages = {
       kadena-signing-api = kpkgs.gitignoreSource ./kadena-signing-api;
-      kadena-signing-api-docs = kpkgs.gitignoreSource ./kadena-signing-api-docs;
+      kadena-signing-api-mock = kpkgs.gitignoreSource ./kadena-signing-api-mock;
     };
 
     shellToolOverrides = ghc: super: {
@@ -48,19 +53,26 @@ let
     };
 
     shells = {
-      ghc = ["kadena-signing-api" "kadena-signing-api-docs"];
+      ghc = ["kadena-signing-api" "kadena-signing-api-mock"];
     };
   });
   tools = import ./tools { inherit pkgs; };
-  inherit (signingProject.ghc) kadena-signing-api kadena-signing-api-docs;
+  inherit (signingProject.ghc) kadena-signing-api kadena-signing-api-mock;
   yq = pkgs.yq-go;
+  schema-tests = import ./schema-tests.nix {
+    inherit pkgs;
+    inherit (tools) schemathesis;
+    inherit kadena-signing-api-mock;
+  };
 in
   {
     inherit
       signingProject
       kadena-signing-api
-      kadena-signing-api-docs
+      kadena-signing-api-mock
+      tools
       yq
+      schema-tests
     ;
-    swagger-cli = tools."@apidevtools/swagger-cli";
+    inherit (tools) swagger-cli schemathesis;
   }

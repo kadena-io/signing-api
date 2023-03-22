@@ -1,10 +1,10 @@
-name: Swagger Validator
+name: Spec Validation
 
 on:
   push:
 
 jobs:
-  swagger-validator:
+  swagger-cli-validation:
     runs-on: ubuntu-latest
 
     steps:
@@ -15,7 +15,41 @@ jobs:
         uses: cachix/install-nix-action@v13
 
       - name: Build with Nix
-        run: nix-build -A swagger-cli
+        run: |
+          nix-build -A swagger-cli \
+            --option substituters '
+              https://nixcache.chainweb.com
+              https://cache.nixos.org/
+              ' \
+            --option trusted-public-keys '
+              nixcache.chainweb.com:FVN503ABX9F8x8K0ptnc99XEz5SaA4Sks6kNcZn2pBY=
+              cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
+              '
 
       - name: Validate Swagger file
         run: ./result/bin/swagger-cli validate swagger.yaml
+
+  schema-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v13
+
+      - name: Build with Nix
+        run: |
+          nix-build -A schema-tests.runSchemaTests \
+            --option substituters '
+              https://nixcache.chainweb.com
+              https://cache.nixos.org/
+              ' \
+            --option trusted-public-keys '
+              nixcache.chainweb.com:FVN503ABX9F8x8K0ptnc99XEz5SaA4Sks6kNcZn2pBY=
+              cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
+              '
+
+      - name: Run the schema tests
+        run: ./result

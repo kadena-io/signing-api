@@ -1,0 +1,43 @@
+cabal-version:      2.4
+name:               kadena-signing-api-mock
+version:            0.1.0.0
+synopsis:           Mock API server for the kadena-signing-api types
+-- description:
+homepage:           https://github.com/kadena-io/signing-api
+license:            BSD-3-Clause
+license-file:       LICENSE
+author:             Enis Bayramoglu
+maintainer:         enis@kadena.io
+-- copyright:
+build-type:         Simple
+-- extra-source-files:
+
+common warnings
+    ghc-options: -Wall
+
+executable kadena-signing-api-mock
+    import:           warnings
+    main-is:          Main.hs
+    -- other-modules:
+    -- other-extensions:
+    build-depends:
+        base >= 4.12.0.0 && < 4.14
+      , bytestring
+      , data-default-class
+      , reflection
+
+      -- Kadena dependencies
+      , kadena-signing-api
+      , pact
+
+      -- Property testing
+      , QuickCheck
+      , generic-arbitrary
+
+      -- HTTP Service
+      , servant-mock
+      , servant-server
+      , wai-extra
+      , warp
+    hs-source-dirs:   app
+    default-language: Haskell2010
