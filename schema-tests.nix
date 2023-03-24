@@ -7,7 +7,9 @@ rec {
     #! ${pkgs.runtimeShell}
     set -xeuo pipefail
 
-    ${kadena-signing-api-mock}/bin/kadena-signing-api-mock
+    # It's important to run the server with exec so that it gets killed
+    # when this shell is killed
+    exec ${kadena-signing-api-mock}/bin/kadena-signing-api-mock
   '';
 
   schemathesisHooks = pkgs.writeTextFile {
