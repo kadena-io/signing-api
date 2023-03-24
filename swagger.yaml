@@ -157,7 +157,7 @@ components:
           # name needs to be in the form IDENTIFIER.IDENTIFIER[.IDENTIFIER]
           # Given a SYMBOL can be one of the following characters: %#+-_&$@<>=^?*!|/~
           # An IDENTIFIER is defined as (LETTER|SYMBOL)(LETTER|DIGIT|SYMBOL)*
-          pattern: ^([a-zA-Z%#+\-_&$@<>=^?*!|\/~][a-zA-Z0-9%#+\-_&$@<>=^?*!|\/~]*)\.([a-zA-Z%#+\-_&$@<>=^?*!|\/~][a-zA-Z0-9%#+\-_&$@<>=^?*!|\/~]*)(\.[a-zA-Z%#+\-_&$@<>=^?*!|\/~][a-zA-Z0-9%#+\-_&$@<>=^?*!|\/~]*)?$
+          pattern: ^([a-zA-Z%#+\-_&$@<>=^?*!|\/~][a-zA-Z0-9%#+\-_&$@<>=^?*!|\/~]*)(\.[a-zA-Z%#+\-_&$@<>=^?*!|\/~][a-zA-Z0-9%#+\-_&$@<>=^?*!|\/~]*){1,2}$
           type: string
       example:
         args:
