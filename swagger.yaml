@@ -206,14 +206,14 @@ components:
       type: string
 
     # QSR_Response:
-    QuicksignRequestResponse:
+    Quicksign_Success:
       description: list of SigData
       required:
       - responses
       properties:
         responses:
           items:
-            $ref: '#/components/schemas/Quicksign_Success'
+            $ref: '#/components/schemas/QuicksignSuccessItem'
           type: array
       example:
         results:
@@ -224,7 +224,7 @@ components:
       type: object
 
     # CSDResponse:
-    Quicksign_Success:
+    QuicksignSuccessItem:
       type: object
       required:
       - commandSigData
@@ -329,7 +329,6 @@ components:
           type: string
 
     QuicksignResponse:
-      # This can either be a QSR_Error or a QSR_Response
       # This can either be a Quicksign_Error or a Quicksign_Success
       oneOf:
       - $ref: '#/components/schemas/Quicksign_Success'
