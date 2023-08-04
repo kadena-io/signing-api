@@ -1,4 +1,4 @@
-openapi: 3.0.1
+openapi: 3.1.0
 info:
   contact:
     email: info@kadena.io
@@ -7,12 +7,15 @@ info:
   version: "1.0"
   title: Kadena Wallet Signing API
   license:
-    name: BSD3
+    name: BSD 3-Clause License
+    identifier: BSD-3-Clause
   description: |
     This API facilitates communication between dapps and wallets. This frees dapp developers from the complexity of managing private keys, allowing them to focus on the functionality and business logic of the application.
     Whenever the dapp needs to send a signed transaction, all you have to do is make an AJAX request to this API on localhost port 9467 and the user's wallet app will handle all the details of transaction signing for you.
+
 servers:
 - url: //localhost:9467/
+
 paths:
   /v1/sign:
     post:
@@ -33,13 +36,14 @@ paths:
                 $ref: '#/components/schemas/SigningResponse'
           description: ""
       x-codegen-request-body-name: body
+
   /v1/quicksign:
     post:
       requestBody:
         content:
           application/json;charset=utf-8:
             schema:
-              $ref: '#/components/schemas/QuickSignRequest'
+              $ref: '#/components/schemas/QuicksignRequest'
         required: true
       responses:
         "400":
@@ -49,9 +53,10 @@ paths:
           content:
             application/json;charset=utf-8:
               schema:
-                $ref: '#/components/schemas/QuickSignResponse'
+                $ref: '#/components/schemas/QuicksignResponse'
           description: ""
       x-codegen-request-body-name: body
+
 components:
   schemas:
     SigningResponse:
@@ -65,6 +70,7 @@ components:
         chainId:
           $ref: '#/components/schemas/ChainId'
       type: object
+
     Command:
       description: transaction command with stringified JSON payload (cmd)
       required:
@@ -76,12 +82,14 @@ components:
           type: string
         sigs:
           items:
-            $ref: '#/components/schemas/UserSig'
+            $ref: '#/components/schemas/QuicksignSignature'
           type: array
         hash:
-          $ref: '#/components/schemas/TypedHash'
+          $ref: '#/components/schemas/Hash'
       type: object
-    UserSig:
+
+    # UserSig:
+    QuicksignSignature:
       description: crypto signature by secret key of command payload
       required:
       - sig
@@ -89,15 +97,17 @@ components:
         sig:
           type: string
       type: object
-    TypedHash:
+
+    # TypedHash:
+    Hash:
       description: blake2 hash in base64 of command payload
-      maxLength: 32
       format: base64url
-      minLength: 32
       type: string
+
     ChainId:
       description: chainweb chain ID where the transaction will be executed
       type: string
+
     SigningRequest:
       description: transaction information sent to the wallet for signing
       required:
@@ -110,7 +120,7 @@ components:
           $ref: '#/components/schemas/Object'
         caps:
           items:
-            $ref: '#/components/schemas/DappCap'
+            $ref: '#/components/schemas/CapabilityWithDescription'
           type: array
         nonce:
           type: string
@@ -127,11 +137,16 @@ components:
             $ref: '#/components/schemas/PublicKey'
           type: array
       type: object
+
     Object:
       description: Arbitrary JSON object.
       type: object
-    DappCap:
-      description: a capability required by the transaction with amplifying information to help the user
+
+    # DappCap:
+    CapabilityWithDescription:
+      description:
+        a capability required by the transaction with amplifying information to
+        help the user
       required:
       - role
       - description
@@ -142,57 +157,64 @@ components:
         description:
           type: string
         cap:
-          $ref: '#/components/schemas/SigCapability'
+          $ref: '#/components/schemas/Capability'
       type: object
-    SigCapability:
+
+    # SigCapability:
+    Capability:
       description: a capability and any arguments it requires
       required:
-      - args
       - name
+      - args
       properties:
+        name:
+          minLength: 1
+          # name needs to be in the form IDENTIFIER.IDENTIFIER[.IDENTIFIER]
+          # Given a SYMBOL can be one of the following characters: %#+-_&$@<>=^?*!|/~
+          # An IDENTIFIER is defined as (LETTER|SYMBOL)(LETTER|DIGIT|SYMBOL)*
+          pattern: ^([a-zA-Z%#+\-_&$@<>=^?*!|\/~][a-zA-Z0-9%#+\-_&$@<>=^?*!|\/~]*)(\.[a-zA-Z%#+\-_&$@<>=^?*!|\/~][a-zA-Z0-9%#+\-_&$@<>=^?*!|\/~]*){1,2}$
+          type: string
         args:
           items:
             type: string
           type: array
-        name:
-          type: string
       example:
+        name: foo.bar
         args:
         - arg1
         - arg2
-        name: foo.bar
       type: object
+
     GasLimit:
       description: max number of gas units you want to spend on this transaction
       type: number
+      minimum: 0
+
     TTLSeconds:
-      description: number of seconds the transaction can wait in the mempool before expiring
+      description:
+        number of seconds the transaction can wait in the mempool before
+        expiring
       type: number
+
     AccountName:
-      description: The name of an account in the coin contract. In the SigningRequest sender field, this will be the account used to pay the transaction's gas price.
+      description:
+        The name of an account in the coin contract. In the SigningRequest
+        sender field, this will be the account used to pay the transaction's gas
+        price.
       type: string
+
     PublicKey:
       type: string
-    QuickSignResponse:
+
+    # QSR_Response:
+    Quicksign_Success:
       description: list of SigData
       required:
-      - results
+      - responses
       properties:
-        results:
+        responses:
           items:
-            required:
-            - sigs
-            - cmd
-            type: object
-            properties:
-              sigs:
-                items:
-                  items:
-                    type: string
-                  type: array
-                type: array
-              cmd:
-                type: string
+            $ref: '#/components/schemas/QuicksignSuccessItem'
           type: array
       example:
         results:
@@ -201,16 +223,129 @@ components:
             - e103338c324190c0e86f06e2fdcc886df42562c5d74a2216c8b2cc729d255686ec5488693569da6afc57a02af5e4ec5bd013c24b4fcddd94cc94eb412e88a20d
           cmd: <cmd here>
       type: object
-    QuickSignRequest:
+
+    # CSDResponse:
+    QuicksignSuccessItem:
+      type: object
+      required:
+      - commandSigData
+      - outcome
+      properties:
+        commandSigData:
+          $ref: '#/components/schemas/CommandSigData'
+        outcome:
+          $ref: '#/components/schemas/SigningOutcome'
+
+    SigningOutcome:
+      discriminator:
+        propertyName: result
+      oneOf:
+      - $ref: '#/components/schemas/SigningOutcome_Success'
+      - $ref: '#/components/schemas/SigningOutcome_Failure'
+      - $ref: '#/components/schemas/SigningOutcome_NoSig'
+
+    # SO_Success:
+    SigningOutcome_Success:
+      type: object
+      required:
+      - result
+      - hash
+      properties:
+        result:
+          type: string
+          enum:
+          - success
+        hash:
+          type: string
+
+    # SO_Failure:
+    SigningOutcome_Failure:
+      type: object
+      required:
+      - result
+      - msg
+      properties:
+        result:
+          type: string
+          enum:
+          - failure
+        msg:
+          type: string
+
+    # SO_NoSig:
+    SigningOutcome_NoSig:
+      type: object
+      required:
+      - result
+      properties:
+        result:
+          type: string
+          enum:
+          - noSig
+
+    # QSR_Error:
+    Quicksign_Error:
+      required:
+      - error
+      properties:
+        error:
+          discriminator:
+            propertyName: type
+          oneOf:
+          - $ref: '#/components/schemas/QuicksignError_Reject'
+          - $ref: '#/components/schemas/QuicksignError_EmptyList'
+          - $ref: '#/components/schemas/QuicksignError_Other'
+
+    QuicksignError_Reject:
+      type: object
+      required:
+      - type
+      properties:
+        type:
+          type: string
+          enum:
+          - reject
+
+    QuicksignError_EmptyList:
+      type: object
+      required:
+      - type
+      properties:
+        type:
+          type: string
+          enum:
+          - emptyList
+
+    QuicksignError_Other:
+      type: object
+      required:
+      - type
+      - msg
+      properties:
+        type:
+          type: string
+          enum:
+          - other
+        msg:
+          type: string
+
+    QuicksignResponse:
+      # This can either be a Quicksign_Error or a Quicksign_Success
+      oneOf:
+      - $ref: '#/components/schemas/Quicksign_Success'
+      - $ref: '#/components/schemas/Quicksign_Error'
+
+    QuicksignRequest:
       description: completed transaction bytes to be signed
       required:
-      - reqs
+      - cmdSigDatas
       properties:
-        reqs:
+        cmdSigDatas:
           items:
             $ref: '#/components/schemas/CommandSigData'
           type: array
       type: object
+
     CommandSigData:
       description: the signature data for a command
       required:
@@ -219,18 +354,26 @@ components:
       properties:
         sigs:
           items:
-            items:
-              type: string
-              nullable: true
-            type: array
+            $ref: '#/components/schemas/CommandSigDataSignature'
           type: array
         cmd:
           type: string
-      example:
-        sigs:
-        - - ae18efd16cbd49e9a92552a2589ac01491b486fbcbb1e3f07980f945597e2033
-          - a8b9ea0fbe6b8f59917908bbd2ec473af4ba30c62e2cbab9981f7f5f62941cbb79aee832efc38675fac42a658192ba7387bbbc61017b2ca9b2f2115bc1f4c503
-        - - fa781bdd858cd2380b5e2b654e58035f7189a6e8158686a1bb7eabb585a56e7f
-          - null
-        cmd: '{"networkId":"testnet04","payload":{"exec":{"data":null,"code":"(+ 1 2)"}},"signers":[{"pubKey":"ae18efd16cbd49e9a92552a2589ac01491b486fbcbb1e3f07980f945597e2033","clist":[{"args":[],"name":"coin.GAS"}]},{"pubKey":"fa781bdd858cd2380b5e2b654e58035f7189a6e8158686a1bb7eabb585a56e7f"}],"meta":{"creationTime":1663085494,"ttl":1800,"gasLimit":20,"chainId":"0","gasPrice":1.0e-6,"sender":"ae18efd16cbd49e9a92552a2589ac01491b486fbcbb1e3f07980f945597e2033"},"nonce":"2022-09-13 16:11:34.678231 UTC"}'
+      type: object
+
+    # CSDSigner:
+    CommandSigDataSignature:
+      description: The signer and the signature
+      required:
+      - pubKey
+      - sig
+      properties:
+        pubKey:
+          minLength: 64
+          maxLength: 64
+          # needs to be hex characters only
+          pattern: ^[0-9a-fA-F]{64}$
+          type: string
+        sig:
+          type: string
+          nullable: true
       type: object
