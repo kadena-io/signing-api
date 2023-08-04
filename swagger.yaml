@@ -7,7 +7,9 @@ info:
   version: "1.0"
   title: Kadena Wallet Signing API
   license:
-    name: BSD3
+    name: BSD 3-Clause License
+    identifier: "BSD-3-Clause"
+    url: "https://spdx.org/licenses/BSD-3-Clause.html"
   description: |
     This API facilitates communication between dapps and wallets. This frees dapp developers from the complexity of managing private keys, allowing them to focus on the functionality and business logic of the application.
     Whenever the dapp needs to send a signed transaction, all you have to do is make an AJAX request to this API on localhost port 9467 and the user's wallet app will handle all the details of transaction signing for you.
