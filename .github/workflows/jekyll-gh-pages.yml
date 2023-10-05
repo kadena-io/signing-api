@@ -32,7 +32,7 @@ jobs:
         uses: actions/configure-pages@v3
       - name: spectacle build
         run: |
-          docker run -v $PWD:/opt -it sourcey/spectacle /bin/sh -c "spectacle --target-dir docs swagger.yaml"
+          docker run -v $PWD:/opt sourcey/spectacle /bin/sh -c "spectacle --target-dir docs swagger.yaml"
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
