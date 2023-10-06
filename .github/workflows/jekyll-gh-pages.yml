@@ -32,7 +32,7 @@ jobs:
         uses: actions/configure-pages@v3
       - name: Redocly build
         run: |
-          docker run --rm -it -v $PWD:/api --workdir /api redocly/cli build-docs swagger.yaml --output docs/index.html
+          docker run --rm -v $PWD:/api --workdir /api redocly/cli build-docs swagger.yaml --output docs/index.html
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
