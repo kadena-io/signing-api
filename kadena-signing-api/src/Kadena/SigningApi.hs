@@ -14,7 +14,7 @@ import GHC.Generics
 import Pact.Server.API
 import Pact.Types.Capability (SigCapability(..))
 import Pact.Types.ChainMeta (TTLSeconds(..))
-import Pact.Types.Runtime (GasLimit(..), ChainId, PublicKey)
+import Pact.Types.Runtime (GasLimit(..), ChainId, PublicKeyText)
 import Pact.Types.Command (Command)
 import Servant.API
 
@@ -47,7 +47,7 @@ data SigningRequest = SigningRequest
   , _signingRequest_gasLimit :: Maybe GasLimit
   , _signingRequest_ttl :: Maybe TTLSeconds
   , _signingRequest_sender :: Maybe AccountName
-  , _signingRequest_extraSigners :: Maybe [PublicKey]
+  , _signingRequest_extraSigners :: Maybe [PublicKeyText]
   } deriving (Show, Generic)
 
 instance ToJSON SigningRequest where

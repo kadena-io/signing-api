@@ -1,6 +1,4 @@
-packages:
-  kadena-signing-api
-  kadena-signing-api-mock
+packages: .
 
 source-repository-package
     type: git
